@@ -30,4 +30,9 @@ public class ProgramBinaryTournamentSlection implements Selection<Program> {
         }
         return parent2.clone();
     }
+
+    @Override
+    public String toString() {
+        return "BinaryTournamentSelection";
+    }
 }

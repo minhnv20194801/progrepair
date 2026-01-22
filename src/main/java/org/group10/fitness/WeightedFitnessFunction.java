@@ -64,4 +64,9 @@ public class WeightedFitnessFunction implements FitnessFunction<Program> {
             this.originalProgram = originalProgram;
         }
     }
+
+    @Override
+    public String toString() {
+        return "WeightedFitnessFuction with postive_weight="+positiveTestWeight+", negative_weight="+negativeTestWeight;
+    }
 }

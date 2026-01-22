@@ -1,5 +1,3 @@
-package org.group10;
-
 public class Counter {
     private int count;
 

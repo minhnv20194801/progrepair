@@ -6,6 +6,7 @@ import org.group10.mutator.Mutator;
 import org.group10.suspiciouscalculator.SuspiciousCalculator;
 import org.group10.testsuite.TestSuite;
 import org.group10.utils.DummyOutputStream;
+import org.group10.utils.FolderCleaner;
 
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
@@ -71,8 +72,7 @@ public class Program implements Cloneable {
 
     public boolean isNotCompilable() {
         try {
-            Path outputDir = Files.createTempDirectory("compiled_");
-            outputDir.toFile().deleteOnExit();
+            Path outputDir = Files.createTempDirectory(className+"compiled_");
 
             Path javaFile = outputDir.resolve(className + ".java");
             Files.write(javaFile, codes);
@@ -80,6 +80,7 @@ public class Program implements Cloneable {
             JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 
             if (compiler == null) {
+                FolderCleaner.cleanTmpDir(className);
                 throw new IllegalStateException("No Java compiler available (JRE instead of JDK)");
             }
 
@@ -93,8 +94,10 @@ public class Program implements Cloneable {
                     javaFile.toString()
             );
 
+            FolderCleaner.cleanTmpDir(className);
             return result != 0;
         } catch (Exception e) {
+            FolderCleaner.cleanTmpDir(className);
             return true;
         }
     }

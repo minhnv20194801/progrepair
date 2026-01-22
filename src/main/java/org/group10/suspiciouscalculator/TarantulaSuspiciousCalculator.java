@@ -41,4 +41,9 @@ public class TarantulaSuspiciousCalculator implements SuspiciousCalculator {
 
         return suspiciousScores;
     }
+
+    @Override
+    public String toString() {
+        return "TarantulaFaultLocalization";
+    }
 }

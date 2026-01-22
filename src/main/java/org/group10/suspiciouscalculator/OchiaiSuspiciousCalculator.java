@@ -39,4 +39,9 @@ public class OchiaiSuspiciousCalculator implements SuspiciousCalculator {
 
         return suspiciousScores;
     }
+
+    @Override
+    public String toString() {
+        return "OchiaiFaultLocalization";
+    }
 }

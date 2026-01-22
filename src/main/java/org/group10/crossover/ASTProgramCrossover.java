@@ -43,4 +43,9 @@ public class ASTProgramCrossover implements Crossover<Program> {
             return Map.entry(parent1, parent2); // fallback
         }
     }
+
+    @Override
+    public String toString() {
+        return "ASTBasedProgramCrossover";
+    }
 }

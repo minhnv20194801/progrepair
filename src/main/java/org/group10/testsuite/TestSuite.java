@@ -1,5 +1,6 @@
 package org.group10.testsuite;
 
+import org.group10.utils.FolderCleaner;
 import org.group10.utils.instrument.CoverageInstrumenter;
 import org.group10.utils.instrument.CoverageTracker;
 import org.group10.utils.instrument.InstrumentingClassLoader;
@@ -62,8 +63,7 @@ public class TestSuite {
             return;
         }
 
-        Path outputDir = Files.createTempDirectory("compiled");
-        outputDir.toFile().deleteOnExit();
+        Path outputDir = Files.createTempDirectory(targetProgram.getClassName()+"compiled_");
 
         Path targetProgramFile = outputDir.resolve(targetProgram.getClassName() + ".java");
         Files.write(targetProgramFile, targetProgram.getCodes());
@@ -72,6 +72,7 @@ public class TestSuite {
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 
         if (compiler == null) {
+            FolderCleaner.cleanTmpDir(targetProgram.getClassName());
             throw new IllegalStateException("No Java compiler available (JRE instead of JDK)");
         }
 
@@ -92,6 +93,7 @@ public class TestSuite {
             if (isShowLog) {
                 System.err.println("Test Suite compile failure");
             }
+            FolderCleaner.cleanTmpDir(targetProgram.getClassName());
             return;
         }
 
@@ -196,5 +198,6 @@ public class TestSuite {
                 System.out.println("==========================");
             }
         }
+        FolderCleaner.cleanTmpDir(targetProgram.getClassName());
     }
 }

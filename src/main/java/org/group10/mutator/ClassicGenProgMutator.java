@@ -157,4 +157,9 @@ public class ClassicGenProgMutator implements Mutator<Program> {
 
         return statements.get(idx);
     }
+
+    @Override
+    public String toString() {
+        return "ClassicGenProgMutator";
+    }
 }

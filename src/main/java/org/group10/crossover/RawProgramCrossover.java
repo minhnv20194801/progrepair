@@ -41,4 +41,9 @@ public class RawProgramCrossover implements Crossover<Program> {
 
         return Map.entry(child1, child2);
     }
+
+    @Override
+    public String toString() {
+        return "RawProgramCrossover";
+    }
 }
