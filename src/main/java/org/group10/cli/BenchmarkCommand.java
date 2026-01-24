@@ -107,9 +107,8 @@ public class BenchmarkCommand implements Callable<Integer> {
     private Program setupInitialProgram(String dirPath, String className, Mutator<Program> mutator, Crossover<Program> crossover, SuspiciousCalculator suspiciousCalculator, FitnessFunction<Program> fitnessFunction) {
         try {
             Program program = new Program(dirPath, className, mutator, crossover , suspiciousCalculator, fitnessFunction);
-            if (fitnessFunction instanceof WeightedFitnessFunction wff) {
-                wff.setOriginalProgram(program);
-            }
+            program.getFitness();
+            program.getSuspiciousScore();
 
             return program;
         } catch (IOException e) {

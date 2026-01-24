@@ -78,10 +78,8 @@ public class RepairCommand implements Callable<Integer> {
         try {
             Program program = new Program(dirPath, className, mutator, crossover , suspiciousCalculator, fitnessFunction);
             program.executeTestSuiteWithLog();
-            if (fitnessFunction instanceof WeightedFitnessFunction wff) {
-                wff.setOriginalProgram(program);
-            }
-
+            program.getFitness();
+            program.getSuspiciousScore();
             return program;
         } catch (IOException e) {
             e.printStackTrace();

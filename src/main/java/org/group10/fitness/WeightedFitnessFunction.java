@@ -28,7 +28,7 @@ public class WeightedFitnessFunction implements FitnessFunction<Program> {
         }
 
         if (originalProgram == null) {
-            return 0;
+            originalProgram = target;
         }
 
         List<String> tmpList = new ArrayList<>(target.getPositiveTests());
@@ -51,18 +51,6 @@ public class WeightedFitnessFunction implements FitnessFunction<Program> {
         }
 
         return (target.getTestSuccessfulCount() == (originalProgram.getTestSuccessfulCount() + originalProgram.getTestFailedCount()));
-    }
-
-    public void setOriginalProgram(Program originalProgram) {
-        if (this.originalProgram == null) {
-            try {
-                originalProgram.executeTestSuite();
-            } catch (Exception e) {
-                return;
-            }
-
-            this.originalProgram = originalProgram;
-        }
     }
 
     @Override
