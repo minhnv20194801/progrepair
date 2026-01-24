@@ -7,13 +7,9 @@ class CounterTest {
 
     private Counter counter;
 
-    @BeforeEach
-    void setUp() {
-        counter = new Counter(); // default constructor
-    }
-
     @Test
     void testDefaultConstructor() {
+        counter = new Counter();
         assertEquals(0, counter.getCount(), "Default constructor should set count to 0");
     }
 
@@ -25,6 +21,7 @@ class CounterTest {
 
     @Test
     void testIncrement() {
+        counter = new Counter();
         counter.increment();
         assertEquals(1, counter.getCount(), "Increment should increase count by 1");
 
@@ -34,6 +31,7 @@ class CounterTest {
 
     @Test
     void testClear() {
+        counter = new Counter();
         counter.setCount(5);
         counter.clear();
         assertEquals(0, counter.getCount(), "Clear should reset count to 0");
@@ -41,12 +39,14 @@ class CounterTest {
 
     @Test
     void testSetCount() {
+        counter = new Counter();
         counter.setCount(7);
         assertEquals(7, counter.getCount(), "setCount should update the count correctly");
     }
 
     @Test
     void testIncrementAfterSetCount() {
+        counter = new Counter();
         counter.setCount(3);
         counter.increment();
         assertEquals(4, counter.getCount(), "Increment after setCount should work correctly");

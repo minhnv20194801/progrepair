@@ -6,6 +6,7 @@ import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
+import org.group10.cli.BenchmarkCommand;
 import org.group10.cli.RepairCommand;
 import org.group10.cli.TestCommand;
 import org.group10.crossover.Crossover;
@@ -35,7 +36,8 @@ import java.util.*;
         description = "Automatic program repair and analysis tool",
         subcommands = {
                 RepairCommand.class,
-                TestCommand.class
+                TestCommand.class,
+                BenchmarkCommand.class
         }
 )
 public class Main {

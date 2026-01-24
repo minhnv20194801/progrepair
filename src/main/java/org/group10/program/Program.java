@@ -72,7 +72,8 @@ public class Program implements Cloneable {
 
     public boolean isNotCompilable() {
         try {
-            Path outputDir = Files.createTempDirectory(className+"compiled_");
+            long id = ProcessHandle.current().pid();
+            Path outputDir = Files.createTempDirectory(className+id+"compiled_");
 
             Path javaFile = outputDir.resolve(className + ".java");
             Files.write(javaFile, codes);

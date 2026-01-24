@@ -1,12 +1,16 @@
 package org.group10.mutator;
 
+import com.github.javaparser.Range;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.nodeTypes.NodeWithStatements;
 import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.stmt.EmptyStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import org.group10.program.Program;
 import org.group10.utils.Randomness;
@@ -18,6 +22,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ClassicGenProgMutator implements Mutator<Program> {
+    private boolean canGetFixFromDifferentClass = false;
     @Override
     public Program mutate(Program program) {
         if (program.isNotCompilable()) {
@@ -31,6 +36,29 @@ public class ClassicGenProgMutator implements Mutator<Program> {
             return program;
         }
         Map<Integer, Double> suspiciousScores = program.getSuspiciousScore();
+
+        // Incase method or constructor is empty, add an empty statement inside it
+        cu.findAll(MethodDeclaration.class).forEach(method -> {
+            method.getBody().ifPresent(body -> {
+                if (body.isEmpty()) {
+                    EmptyStmt empty = new EmptyStmt();
+                    body.getRange().ifPresent(r ->
+                        empty.setRange(new Range(r.end, r.end))
+                    );
+                    body.addStatement(empty);
+                }
+            });
+        });
+        cu.findAll(ConstructorDeclaration.class).forEach(constructor -> {
+            BlockStmt body = constructor.getBody();
+            if (body.isEmpty()) {
+                EmptyStmt empty = new EmptyStmt();
+                body.getRange().ifPresent(r ->
+                    empty.setRange(new Range(r.end, r.end))
+                );
+                body.addStatement(empty);
+            }
+        });
 
         List<Statement> stmtLst = cu.findAll(Statement.class).stream().filter(stmt -> !(stmt instanceof BlockStmt)).toList();
         List<Integer> suspiciousLineNumbers = new ArrayList<>(suspiciousScores.keySet());
@@ -46,21 +74,20 @@ public class ClassicGenProgMutator implements Mutator<Program> {
         if (suspiciousScores.isEmpty()) {
             return program;
         }
+
         int targetLine = Randomness.getRandomIntegerWithWeighted(suspiciousScores);
         CompilationUnit mutatedCu;
         int choice = Randomness.getRandom().nextInt(3);
-//        switch (choice) {
-//            case 0 -> System.out.println("Insert");
-//            case 1 -> System.out.println("Replace");
-//            case 2 -> System.out.println("Delete");
-//            default -> mutatedCu = cu;
-//        }
+
         switch (choice) {
             case 0 -> mutatedCu = insert(cu, targetLine);
-            case 1 -> mutatedCu = swap(cu, targetLine);
-            case 2 -> mutatedCu = delete(cu, targetLine);
+            case 1 -> mutatedCu = delete(cu, targetLine);
+            case 2 -> mutatedCu = swap(cu, targetLine);
             default -> mutatedCu = cu;
         }
+        // Clean all inserted EmptyStmt
+        mutatedCu.findAll(EmptyStmt.class).forEach(Node::remove);
+
         return new Program(program.getClassName(), mutatedCu.toString().lines().toList(), program.getTestSuite(), program.getMutator(), program.getCrossover(), program.getSuspiciousCalculator(), program.getFitnessFunction());
     }
 
@@ -69,19 +96,17 @@ public class ClassicGenProgMutator implements Mutator<Program> {
     }
 
     private CompilationUnit insert(CompilationUnit cu, int lineNumber) {
-        CompilationUnit result = cu.clone();
-
         // Find the first node that starts at insertTarget
-        Optional<Node> targetNodeOpt = result.findAll(Node.class).stream()
+        Optional<Node> targetNodeOpt = cu.findAll(Node.class).stream()
                 .filter(n -> n.getRange().map(r -> r.begin.line == lineNumber).orElse(false))
                 .findFirst();
 
         if (targetNodeOpt.isPresent()) {
             Node targetNode = targetNodeOpt.get();
-            Node insertTarget = getRandomStmt(result, targetNode);
+            Node insertTarget = getRandomStmt(cu, targetNode);
             // if we can't find insert target then do nothing
             if (insertTarget == null) {
-                return result;
+                return cu;
             }
 //            System.out.println("Insert " + insertTarget.getRange().get().begin.line + " before " + lineNumber);
             Optional<Node> parentOpt = targetNode.getParentNode();
@@ -96,34 +121,30 @@ public class ClassicGenProgMutator implements Mutator<Program> {
             });
         }
 
-        return result;
+        return cu;
     }
 
     private CompilationUnit delete(CompilationUnit cu, int lineNumber) {
-        CompilationUnit result = cu.clone();
-
 //        System.out.println("Delete line " + lineNumber);
-        result.findAll(Node.class).stream()
+        cu.findAll(Node.class).stream()
                 .filter(n -> n.getRange().map(r -> r.begin.line == lineNumber).orElse(false))
                 .findFirst()
                 .ifPresent(Node::remove);
 
-        return result;
+        return cu;
     }
 
     private CompilationUnit swap(CompilationUnit cu, int lineNumber) {
-        CompilationUnit result = cu.clone();
-
-        Optional<Node> targetNodeOpt = result.findAll(Node.class).stream()
+        Optional<Node> targetNodeOpt = cu.findAll(Node.class).stream()
                 .filter(n -> n.getRange().map(r -> r.begin.line == lineNumber).orElse(false))
                 .findFirst();
 
         if (targetNodeOpt.isPresent()) {
             Node targetNode = targetNodeOpt.get();
-            Node swappedNode = getRandomStmt(result, targetNode);
+            Node swappedNode = getRandomStmt(cu, targetNode);
             // if we can't find swap target then do nothing
             if (swappedNode == null) {
-                return result;
+                return cu;
             }
             Node tmpNode = targetNode.clone();
 //            System.out.println("Swap " + swappedNode.getRange().get().begin.line + " with " + lineNumber);
@@ -132,12 +153,12 @@ public class ClassicGenProgMutator implements Mutator<Program> {
                 targetNode.replace(swappedNode.clone());
                 swappedNode.replace(tmpNode);
             } catch (Exception e) {
-                // If we can't replace then try again
-                return swap(cu, lineNumber);
+                // If we can't replace then return the same program
+                return cu;
             }
         }
 
-        return result;
+        return cu;
     }
 
     private Node getRandomStmt(CompilationUnit cu, Node targetNode) {
@@ -146,7 +167,7 @@ public class ClassicGenProgMutator implements Mutator<Program> {
 
         List<Statement> statements = targetClass.findAll(Statement.class)
                 .stream()
-                .filter(s -> !(s instanceof BlockStmt) && !(s.equals(targetNode)))
+                .filter(s -> !(s instanceof BlockStmt) && !(s.equals(targetNode) && !(s instanceof EmptyStmt)))
                 .toList();
 
         if (statements.isEmpty()) {
@@ -160,6 +181,10 @@ public class ClassicGenProgMutator implements Mutator<Program> {
 
     @Override
     public String toString() {
-        return "ClassicGenProgMutator";
+        return "ClassicGenProgMutator get fixes from different classes: " + canGetFixFromDifferentClass;
+    }
+
+    public void setCanGetFixFromDifferentClass(boolean canGetFixFromDifferentClass) {
+        this.canGetFixFromDifferentClass = canGetFixFromDifferentClass;
     }
 }

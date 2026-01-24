@@ -49,8 +49,13 @@ public class RepairCommand implements Callable<Integer> {
     @CommandLine.Option(names = {"-fl", "--fault_localization"}, defaultValue = "ochiai")
     private String faultLocalization;
 
-    private Mutator<Program> setupClassicMutator() {
-        return new ClassicGenProgMutator();
+    @CommandLine.Option(names = {"--multiclassmutation"}, defaultValue = "false")
+    private boolean canGetFixFromDifferentClasses;
+
+    private Mutator<Program> setupClassicMutator(boolean canGetFixFromDifferentClasses) {
+        ClassicGenProgMutator mutator = new ClassicGenProgMutator();
+        mutator.setCanGetFixFromDifferentClass(canGetFixFromDifferentClasses);
+        return mutator;
     }
 
     private Crossover<Program> setupRawProgramCrossover() {
@@ -72,6 +77,7 @@ public class RepairCommand implements Callable<Integer> {
     private Program setupInitialProgram(String dirPath, String className, Mutator<Program> mutator, Crossover<Program> crossover, SuspiciousCalculator suspiciousCalculator, FitnessFunction<Program> fitnessFunction) {
         try {
             Program program = new Program(dirPath, className, mutator, crossover , suspiciousCalculator, fitnessFunction);
+            program.executeTestSuiteWithLog();
             if (fitnessFunction instanceof WeightedFitnessFunction wff) {
                 wff.setOriginalProgram(program);
             }
@@ -80,6 +86,10 @@ public class RepairCommand implements Callable<Integer> {
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("Fail to set up inital program");
+            System.exit(1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Fail to set up inital program. Unknown error occured");
             System.exit(1);
         }
 
@@ -96,10 +106,9 @@ public class RepairCommand implements Callable<Integer> {
 
     @Override
     public Integer call() {
-        Mutator<Program> mutator = setupClassicMutator();
+        Mutator<Program> mutator = setupClassicMutator(canGetFixFromDifferentClasses);
         Crossover<Program> crossover = setupRawProgramCrossover();
-        SuspiciousCalculator suspiciousCalculator =
-                setupOchiaiSuspiciousCalculator();
+        SuspiciousCalculator suspiciousCalculator;
         faultLocalization = faultLocalization.toLowerCase();
         switch (faultLocalization) {
             case "ochiai": suspiciousCalculator = setupOchiaiSuspiciousCalculator(); break;

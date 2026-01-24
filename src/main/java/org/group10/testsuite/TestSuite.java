@@ -63,7 +63,8 @@ public class TestSuite {
             return;
         }
 
-        Path outputDir = Files.createTempDirectory(targetProgram.getClassName()+"compiled_");
+        long id = ProcessHandle.current().pid();
+        Path outputDir = Files.createTempDirectory(targetProgram.getClassName()+id+"compiled_");
 
         Path targetProgramFile = outputDir.resolve(targetProgram.getClassName() + ".java");
         Files.write(targetProgramFile, targetProgram.getCodes());

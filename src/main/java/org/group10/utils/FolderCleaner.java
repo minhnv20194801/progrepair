@@ -16,8 +16,9 @@ public class FolderCleaner {
         if (!Files.isDirectory(tmpDir)) return;
 
         try {
+            long id = ProcessHandle.current().pid();
             DirectoryStream<Path> stream =
-                     Files.newDirectoryStream(tmpDir, prefix+"compiled_*");
+                     Files.newDirectoryStream(tmpDir, prefix+id+"compiled_*");
 
             for (Path dir : stream) {
                 if (Files.isDirectory(dir)) {
