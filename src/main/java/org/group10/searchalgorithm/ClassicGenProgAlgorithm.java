@@ -49,7 +49,7 @@ public class ClassicGenProgAlgorithm implements SearchAlgorithm<Program> {
         List<Program> population = initializePopulation(startPoint);
         System.out.println("Finish initialize population");
 
-        for (Program prog: population) {
+        for (Program prog : population) {
             if (prog.isMaxFitness()) {
                 System.out.println("Patches Found!!!");
                 return prog;
@@ -93,7 +93,7 @@ public class ClassicGenProgAlgorithm implements SearchAlgorithm<Program> {
 
             population = new ArrayList<>();
             System.out.println("Start mutation");
-            for (Program prog: newPopulation) {
+            for (Program prog : newPopulation) {
                 if (Randomness.getRandom().nextDouble() < mutationWeight) {
                     Program mutated = prog.mutate();
                     while (mutated.isNotCompilable()) {
@@ -106,7 +106,7 @@ public class ClassicGenProgAlgorithm implements SearchAlgorithm<Program> {
             }
             System.out.println("Finish mutation");
             double populationBestFitness = 0.0;
-            for (Program prog: population) {
+            for (Program prog : population) {
                 if (prog.isMaxFitness()) {
                     System.out.println("Patches Found on generation #" + i + "!!!");
                     return prog;

@@ -79,7 +79,7 @@ public class RepairCommand implements Callable<Integer> {
 
     private Program setupInitialProgram(String dirPath, String className, Mutator<Program> mutator, Crossover<Program> crossover, SuspiciousCalculator suspiciousCalculator, FitnessFunction<Program> fitnessFunction) {
         try {
-            Program program = new Program(dirPath, className, mutator, crossover , suspiciousCalculator, fitnessFunction);
+            Program program = new Program(dirPath, className, mutator, crossover, suspiciousCalculator, fitnessFunction);
             program.executeTestSuiteWithLog();
             program.getFitness();
             program.getSuspiciousScore();
@@ -112,9 +112,15 @@ public class RepairCommand implements Callable<Integer> {
         SuspiciousCalculator suspiciousCalculator;
         faultLocalization = faultLocalization.toLowerCase();
         switch (faultLocalization) {
-            case "ochiai": suspiciousCalculator = setupOchiaiSuspiciousCalculator(); break;
-            case "tarantula": suspiciousCalculator = setupTarantulaSuspiciousCalculator(); break;
-            default: suspiciousCalculator = setupOchiaiSuspiciousCalculator(); break;
+            case "ochiai":
+                suspiciousCalculator = setupOchiaiSuspiciousCalculator();
+                break;
+            case "tarantula":
+                suspiciousCalculator = setupTarantulaSuspiciousCalculator();
+                break;
+            default:
+                suspiciousCalculator = setupOchiaiSuspiciousCalculator();
+                break;
         }
 
         FitnessFunction fitnessFunction =

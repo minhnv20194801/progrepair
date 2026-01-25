@@ -1,4 +1,22 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ShopTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCo Coverage Report</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">ShopTest.java</span></div><h1>ShopTest.java</h1><pre class="source lang-java linenums">import org.junit.jupiter.api.BeforeEach;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta content="text/html;charset=UTF-8" http-equiv="Content-Type"/>
+    <link href="../jacoco-resources/report.css" rel="stylesheet" type="text/css"/>
+    <link href="../jacoco-resources/report.gif" rel="shortcut icon" type="image/gif"/>
+    <title>ShopTest.java</title>
+    <link href="../jacoco-resources/prettify.css" rel="stylesheet" type="text/css"/>
+    <script src="../jacoco-resources/prettify.js" type="text/javascript"></script>
+</head>
+<body onload="window['PR_TAB_WIDTH']=4;prettyPrint()">
+<div class="breadcrumb" id="breadcrumb"><span class="info"><a class="el_session"
+                                                              href="../jacoco-sessions.html">Sessions</a></span><a
+        class="el_report" href="../index.html">JaCoCo Coverage Report</a> &gt; <a class="el_package"
+                                                                                  href="index.source.html">default</a> &gt;
+    <span class="el_source">ShopTest.java</span></div>
+<h1>ShopTest.java</h1>
+<pre class="source lang-java linenums">import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -21,7 +39,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
     private Shop createShopWithApple(int qty) {
 <span class="fc" id="L23">        Item apple = new Item(&quot;Apple&quot;, qty, 1.0);</span>
-<span class="fc" id="L24">        return new Shop(new ArrayList&lt;&gt;(List.of(apple)), 2); // 2 carts for testing</span>
+<span class="fc"
+      id="L24">        return new Shop(new ArrayList&lt;&gt;(List.of(apple)), 2); // 2 carts for testing</span>
     }
 
     // ================== Item Tests ==================
@@ -135,7 +154,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
         // No more carts -&gt; exception
 <span class="fc" id="L137">        Customer charlie = new Customer(&quot;Charlie&quot;, new BankAccount(100));</span>
-<span class="pc" id="L138">        assertThrows(MaximumCustomerException.class, () -&gt; shop.acceptCustomer(charlie));</span>
+<span class="pc"
+      id="L138">        assertThrows(MaximumCustomerException.class, () -&gt; shop.acceptCustomer(charlie));</span>
 <span class="fc" id="L139">    }</span>
 
     @Test
@@ -229,7 +249,8 @@ import static org.junit.jupiter.api.Assertions.*;
 <span class="fc" id="L229">        Customer c = new Customer(&quot;Alice&quot;, new BankAccount(100));</span>
 
 <span class="fc" id="L231">        assertThrows(UnregisteredCustomerException.class,</span>
-<span class="nc" id="L232">                () -&gt; shop.addItemToCustomerCart(c, new Item(&quot;Apple&quot;, 2, 1.0)));</span>
+<span class="nc"
+      id="L232">                () -&gt; shop.addItemToCustomerCart(c, new Item(&quot;Apple&quot;, 2, 1.0)));</span>
 <span class="fc" id="L233">    }</span>
 
     @Test
@@ -257,7 +278,8 @@ import static org.junit.jupiter.api.Assertions.*;
 <span class="fc" id="L257">        BankAccount source = new BankAccount(50);</span>
 <span class="fc" id="L258">        BankAccount dest = new BankAccount(50);</span>
 
-<span class="pc" id="L260">        assertThrows(FailedTransactionException.class, () -&gt; source.transferTo(80, dest));</span>
+<span class="pc"
+      id="L260">        assertThrows(FailedTransactionException.class, () -&gt; source.transferTo(80, dest));</span>
 <span class="fc" id="L261">    }</span>
 
     @Test
@@ -266,4 +288,8 @@ import static org.junit.jupiter.api.Assertions.*;
 <span class="fc" id="L266">        assertEquals(0, source.getBalance(), 0.0001);</span>
 <span class="fc" id="L267">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
+</pre>
+<div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span>
+</div>
+</body>
+</html>

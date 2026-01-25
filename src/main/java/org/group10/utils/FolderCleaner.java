@@ -5,7 +5,6 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Comparator;
 
 import static com.google.common.io.MoreFiles.deleteRecursively;
 
@@ -18,7 +17,7 @@ public class FolderCleaner {
         try {
             long id = ProcessHandle.current().pid();
             DirectoryStream<Path> stream =
-                     Files.newDirectoryStream(tmpDir, prefix+id+"compiled_*");
+                    Files.newDirectoryStream(tmpDir, prefix + id + "compiled_*");
 
             for (Path dir : stream) {
                 if (Files.isDirectory(dir)) {

@@ -9,25 +9,7 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeS
 import org.group10.cli.BenchmarkCommand;
 import org.group10.cli.RepairCommand;
 import org.group10.cli.TestCommand;
-import org.group10.crossover.Crossover;
-import org.group10.crossover.RawProgramCrossover;
-import org.group10.fitness.FitnessFunction;
-import org.group10.fitness.WeightedFitnessFunction;
-import org.group10.mutator.ClassicGenProgMutator;
-import org.group10.mutator.Mutator;
-import org.group10.program.Program;
-import org.group10.searchalgorithm.ClassicGenProgAlgorithm;
-import org.group10.searchalgorithm.SearchAlgorithm;
-import org.group10.selection.ProgramBinaryTournamentSlection;
-import org.group10.selection.Selection;
-import org.group10.suspiciouscalculator.OchiaiSuspiciousCalculator;
-import org.group10.suspiciouscalculator.SuspiciousCalculator;
-import org.group10.suspiciouscalculator.TarantulaSuspiciousCalculator;
-import org.group10.utils.Randomness;
 import picocli.CommandLine;
-
-import java.io.IOException;
-import java.util.*;
 
 @CommandLine.Command(
         name = "progrep",

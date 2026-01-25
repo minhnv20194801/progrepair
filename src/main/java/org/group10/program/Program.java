@@ -17,25 +17,26 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Program implements Cloneable {
     private final String className;
-    private List<String> codes = new ArrayList<>();
     private final Mutator<Program> mutator;
     private final Crossover<Program> crossover;
     private final SuspiciousCalculator suspiciousCalculator;
     private final FitnessFunction<Program> fitnessFunction;
-    private TestSuite testSuite;
-
-    private List<String> positiveTests = new ArrayList<>();
-    private List<String> negativeTests = new ArrayList<>();
     private final Map<Integer, Integer> efs = new HashMap<>();
     private final Map<Integer, Integer> nfs = new HashMap<>();
     private final Map<Integer, Integer> eps = new HashMap<>();
     private final Map<Integer, Integer> nps = new HashMap<>();
-
+    private List<String> codes = new ArrayList<>();
+    private TestSuite testSuite;
+    private List<String> positiveTests = new ArrayList<>();
+    private List<String> negativeTests = new ArrayList<>();
     private boolean isTestSuiteExecuted = false;
 
     public Program(String className, List<String> codes, TestSuite testSuite, Mutator<Program> mutator, Crossover<Program> crossover, SuspiciousCalculator suspiciousCalculator, FitnessFunction<Program> fitnessFunction) {
@@ -74,7 +75,7 @@ public class Program implements Cloneable {
     public boolean isNotCompilable() {
         try {
             long id = ProcessHandle.current().pid();
-            Path outputDir = Files.createTempDirectory(className+id+"compiled_");
+            Path outputDir = Files.createTempDirectory(className + id + "compiled_");
 
             Path javaFile = outputDir.resolve(className + ".java");
             Files.write(javaFile, codes);
@@ -159,18 +160,23 @@ public class Program implements Cloneable {
     public long getTestFailedCount() {
         return negativeTests.size();
     }
+
     public List<String> getNegativeTests() {
         return negativeTests;
     }
+
     public void setNegativeTests(List<String> negativeTests) {
         this.negativeTests = negativeTests;
     }
+
     public long getTestSuccessfulCount() {
         return positiveTests.size();
     }
+
     public List<String> getPositiveTests() {
         return positiveTests;
     }
+
     public void setPositiveTests(List<String> positiveTests) {
         this.positiveTests = positiveTests;
     }

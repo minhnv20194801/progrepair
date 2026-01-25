@@ -1,11 +1,11 @@
 package org.group10.testsuite;
 
+import org.group10.program.Program;
+import org.group10.utils.DummyOutputStream;
 import org.group10.utils.FolderCleaner;
 import org.group10.utils.instrument.CoverageInstrumenter;
 import org.group10.utils.instrument.CoverageTracker;
 import org.group10.utils.instrument.InstrumentingClassLoader;
-import org.group10.program.Program;
-import org.group10.utils.DummyOutputStream;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.launcher.Launcher;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
@@ -65,7 +65,7 @@ public class TestSuite {
         }
 
         long id = ProcessHandle.current().pid();
-        Path outputDir = Files.createTempDirectory(targetProgram.getClassName()+id+"compiled_");
+        Path outputDir = Files.createTempDirectory(targetProgram.getClassName() + id + "compiled_");
 
         Path targetProgramFile = outputDir.resolve(targetProgram.getClassName() + ".java");
         Files.write(targetProgramFile, targetProgram.getCodes());
@@ -79,7 +79,7 @@ public class TestSuite {
         }
 
         // dummyOutputStream so the compiler error or warning does not go out
-        OutputStream dummyOutputStream = isShowLog? null : new DummyOutputStream();
+        OutputStream dummyOutputStream = isShowLog ? null : new DummyOutputStream();
 
         int result = compiler.run(
                 null,
@@ -139,7 +139,7 @@ public class TestSuite {
                 System.out.println("==========================");
             }
 
-            for (String testClassName: testClasses) {
+            for (String testClassName : testClasses) {
                 Class<?> testClass = loader.loadClass(testClassName);
                 for (Method m : testClass.getDeclaredMethods()) {
                     if (m.isAnnotationPresent(Test.class)) {

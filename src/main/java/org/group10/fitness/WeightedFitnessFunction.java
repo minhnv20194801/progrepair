@@ -39,7 +39,7 @@ public class WeightedFitnessFunction implements FitnessFunction<Program> {
         tmpList.retainAll(originalProgram.getNegativeTests());
         long negativeCount = tmpList.size();
 
-        return positiveCount*positiveTestWeight + negativeCount*negativeTestWeight;
+        return positiveCount * positiveTestWeight + negativeCount * negativeTestWeight;
     }
 
     @Override
@@ -55,6 +55,6 @@ public class WeightedFitnessFunction implements FitnessFunction<Program> {
 
     @Override
     public String toString() {
-        return "WeightedFitnessFuction with postive_weight="+positiveTestWeight+", negative_weight="+negativeTestWeight;
+        return "WeightedFitnessFuction with postive_weight=" + positiveTestWeight + ", negative_weight=" + negativeTestWeight;
     }
 }

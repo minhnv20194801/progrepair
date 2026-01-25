@@ -17,7 +17,10 @@ import org.group10.suspiciouscalculator.TarantulaSuspiciousCalculator;
 import picocli.CommandLine;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 @CommandLine.Command(
@@ -71,7 +74,7 @@ public class BenchmarkCommand implements Callable<Integer> {
 
         benchmarkTargetMap.put(
                 2,
-                Map.entry("./benchmark/IntCalculator_buggy/", "IntCalculator")
+                Map.entry("./benchmark/VIPCustomer_buggy/", "VIPCustomer")
         );
 
         benchmarkTargetMap.put(
@@ -109,7 +112,7 @@ public class BenchmarkCommand implements Callable<Integer> {
 
     private Program setupInitialProgram(String dirPath, String className, Mutator<Program> mutator, Crossover<Program> crossover, SuspiciousCalculator suspiciousCalculator, FitnessFunction<Program> fitnessFunction) {
         try {
-            Program program = new Program(dirPath, className, mutator, crossover , suspiciousCalculator, fitnessFunction);
+            Program program = new Program(dirPath, className, mutator, crossover, suspiciousCalculator, fitnessFunction);
             program.getFitness();
             program.getSuspiciousScore();
 
@@ -139,9 +142,15 @@ public class BenchmarkCommand implements Callable<Integer> {
         SuspiciousCalculator suspiciousCalculator;
         faultLocalization = faultLocalization.toLowerCase();
         switch (faultLocalization) {
-            case "ochiai": suspiciousCalculator = setupOchiaiSuspiciousCalculator(); break;
-            case "tarantula": suspiciousCalculator = setupTarantulaSuspiciousCalculator(); break;
-            default: suspiciousCalculator = setupOchiaiSuspiciousCalculator(); break;
+            case "ochiai":
+                suspiciousCalculator = setupOchiaiSuspiciousCalculator();
+                break;
+            case "tarantula":
+                suspiciousCalculator = setupTarantulaSuspiciousCalculator();
+                break;
+            default:
+                suspiciousCalculator = setupOchiaiSuspiciousCalculator();
+                break;
         }
 
         FitnessFunction fitnessFunction =
@@ -171,7 +180,7 @@ public class BenchmarkCommand implements Callable<Integer> {
         System.out.println("=====================================================================");
         for (int i = 0; i < runs; i++) {
             System.out.println("====================================================");
-            System.out.println("Benchmark Run #"+i);
+            System.out.println("Benchmark Run #" + i);
             long start = System.nanoTime();
             Program result = searchAlgorithm.search(initialProgram);
             long end = System.nanoTime();

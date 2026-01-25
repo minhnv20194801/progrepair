@@ -19,10 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class ClassicGenProgMutator implements Mutator<Program> {
     private boolean canGetFixFromDifferentClass = false;
+
     @Override
     public Program mutate(Program program) {
         if (program.isNotCompilable()) {
@@ -43,7 +43,7 @@ public class ClassicGenProgMutator implements Mutator<Program> {
                 if (body.isEmpty()) {
                     EmptyStmt empty = new EmptyStmt();
                     body.getRange().ifPresent(r ->
-                        empty.setRange(new Range(r.end, r.end))
+                            empty.setRange(new Range(r.end, r.end))
                     );
                     body.addStatement(empty);
                 }
@@ -54,7 +54,7 @@ public class ClassicGenProgMutator implements Mutator<Program> {
             if (body.isEmpty()) {
                 EmptyStmt empty = new EmptyStmt();
                 body.getRange().ifPresent(r ->
-                    empty.setRange(new Range(r.end, r.end))
+                        empty.setRange(new Range(r.end, r.end))
                 );
                 body.addStatement(empty);
             }

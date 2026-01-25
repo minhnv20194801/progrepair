@@ -7,10 +7,8 @@ org/group10/Main.class
 org/group10/fitness/FitnessFunction.class
 org/group10/utils/instrument/InstrumentingClassLoader.class
 org/group10/mutator/ClassicGenProgMutator.class
-org/group10/CounterTest.class
 org/group10/crossover/Crossover.class
 org/group10/utils/instrument/CoverageInstrumenter$1$1.class
-org/group10/Counter.class
 org/group10/selection/Selection.class
 org/group10/suspiciouscalculator/SuspiciousCalculator.class
 org/group10/utils/Randomness.class
@@ -22,7 +20,6 @@ org/group10/searchalgorithm/ClassicGenProgAlgorithm.class
 org/group10/selection/ProgramBinaryTournamentSlection.class
 org/group10/cli/TestCommand.class
 org/group10/program/Program.class
-org/group10/crossover/ASTProgramCrossover.class
 org/group10/mutator/Mutator.class
 org/group10/cli/RepairCommand.class
 org/group10/utils/instrument/CoverageInstrumenter$1.class
