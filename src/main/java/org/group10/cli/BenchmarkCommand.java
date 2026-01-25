@@ -53,6 +53,9 @@ public class BenchmarkCommand implements Callable<Integer> {
     @CommandLine.Option(names = {"--multiclassmutation"}, defaultValue = "false")
     private boolean canGetFixFromDifferentClasses;
 
+    @CommandLine.Option(names = {"-out", "--output_dir"})
+    private String outputDir;
+
     private Map<Integer, Map.Entry<String, String>> benchmarkTargetMap = new HashMap<>();
 
     private void setupBenchmarkTargetMap() {
@@ -158,6 +161,7 @@ public class BenchmarkCommand implements Callable<Integer> {
 
         int successCount = 0;
         int failCount = 0;
+        List<Program> results = new ArrayList<>();
         List<Double> runTimes = new ArrayList<>();
         List<Double> successRunTimes = new ArrayList<>();
         System.out.println("=====================================================================");
@@ -179,6 +183,7 @@ public class BenchmarkCommand implements Callable<Integer> {
                 failCount++;
             }
             runTimes.add(elapsedTime);
+            results.add(result);
         }
 
         double median;
@@ -228,6 +233,24 @@ public class BenchmarkCommand implements Callable<Integer> {
         }
         System.out.println("=====================================================================");
 
+        if (outputDir != null) {
+            try {
+                for (int i = 0; i < results.size(); i++) {
+                    Program result = results.get(i);
+                    String dir = outputDir + "/" + i + "_";
+                    if (result.isMaxFitness()) {
+                        dir += "succeeded/";
+                    } else {
+                        dir += "failed/";
+                    }
+                    result.toFile(dir);
+                }
+                System.out.println("Results have been written to " + outputDir);
+            } catch (Exception e) {
+                System.err.println("Fail to write result to output directory");
+                return 0;
+            }
+        }
         return 0;
     }
 }

@@ -24,6 +24,7 @@ import java.lang.reflect.Method;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -200,5 +201,14 @@ public class TestSuite {
             }
         }
         FolderCleaner.cleanTmpDir(targetProgram.getClassName());
+    }
+
+
+    public void toFile(String outputDir, String className) throws Exception {
+        Path dir = Paths.get(outputDir);
+        Files.createDirectories(dir);
+
+        Path javaFile = dir.resolve(className + "Test.java");
+        Files.write(javaFile, codes);
     }
 }

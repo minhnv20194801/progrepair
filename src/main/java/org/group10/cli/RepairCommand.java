@@ -52,6 +52,9 @@ public class RepairCommand implements Callable<Integer> {
     @CommandLine.Option(names = {"--multiclassmutation"}, defaultValue = "false")
     private boolean canGetFixFromDifferentClasses;
 
+    @CommandLine.Option(names = {"-out", "--output_dir"})
+    private String outputDir;
+
     private Mutator<Program> setupClassicMutator(boolean canGetFixFromDifferentClasses) {
         ClassicGenProgMutator mutator = new ClassicGenProgMutator();
         mutator.setCanGetFixFromDifferentClass(canGetFixFromDifferentClasses);
@@ -139,6 +142,16 @@ public class RepairCommand implements Callable<Integer> {
 
         System.out.printf("Elapsed time: %.2f ms%n",
                 (end - start) / 1_000_000.0);
+
+        if (outputDir != null) {
+            try {
+                result.toFile(outputDir);
+                System.out.println("Result have been written to " + outputDir);
+            } catch (Exception e) {
+                System.err.println("Fail to write result to output directory");
+                return 0;
+            }
+        }
 
         return 0;
     }

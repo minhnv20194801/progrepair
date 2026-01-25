@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -115,6 +116,15 @@ public class Program implements Cloneable {
         if (isTestSuiteExecuted) return;
         testSuite.executeTests(this, withLog);
         isTestSuiteExecuted = true;
+    }
+
+    public void toFile(String outputDir) throws Exception {
+        Path dir = Paths.get(outputDir);
+        Files.createDirectories(dir);
+
+        Path javaFile = dir.resolve(className + ".java");
+        Files.write(javaFile, codes);
+        this.testSuite.toFile(outputDir, this.getClassName());
     }
 
     @Override
