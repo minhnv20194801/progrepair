@@ -51,10 +51,6 @@ public class TestSuite {
         }
     }
 
-    public void executeTests(Program targetProgram) throws Exception {
-        executeTests(targetProgram, false);
-    }
-
     public void executeTests(Program targetProgram, boolean isShowLog) throws Exception {
         if (targetProgram.isNotCompilable()) {
             if (isShowLog) {

@@ -33,8 +33,8 @@ public class Program implements Cloneable {
     private final Map<Integer, Integer> nfs = new HashMap<>();
     private final Map<Integer, Integer> eps = new HashMap<>();
     private final Map<Integer, Integer> nps = new HashMap<>();
+    private final TestSuite testSuite;
     private List<String> codes = new ArrayList<>();
-    private TestSuite testSuite;
     private List<String> positiveTests = new ArrayList<>();
     private List<String> negativeTests = new ArrayList<>();
     private boolean isTestSuiteExecuted = false;
@@ -236,6 +236,7 @@ public class Program implements Cloneable {
     @Override
     public Program clone() {
         try {
+            super.clone();
             return new Program(this.className, this.codes, this.testSuite, this.mutator, this.crossover, this.suspiciousCalculator, this.fitnessFunction);
         } catch (Exception e) {
             return null;

@@ -85,11 +85,11 @@ public class RepairCommand implements Callable<Integer> {
             program.getSuspiciousScore();
             return program;
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
             System.err.println("Fail to set up inital program");
             System.exit(1);
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
             System.err.println("Fail to set up inital program. Unknown error occured");
             System.exit(1);
         }
@@ -111,19 +111,13 @@ public class RepairCommand implements Callable<Integer> {
         Crossover<Program> crossover = setupRawProgramCrossover();
         SuspiciousCalculator suspiciousCalculator;
         faultLocalization = faultLocalization.toLowerCase();
-        switch (faultLocalization) {
-            case "ochiai":
-                suspiciousCalculator = setupOchiaiSuspiciousCalculator();
-                break;
-            case "tarantula":
-                suspiciousCalculator = setupTarantulaSuspiciousCalculator();
-                break;
-            default:
-                suspiciousCalculator = setupOchiaiSuspiciousCalculator();
-                break;
-        }
+        suspiciousCalculator = switch (faultLocalization) {
+            case "ochiai" -> setupOchiaiSuspiciousCalculator();
+            case "tarantula" -> setupTarantulaSuspiciousCalculator();
+            default -> setupOchiaiSuspiciousCalculator();
+        };
 
-        FitnessFunction fitnessFunction =
+        FitnessFunction<Program> fitnessFunction =
                 setupWeightedFitnessFunction(positiveWeight, negativeWeight);
 
         Program initialProgram =

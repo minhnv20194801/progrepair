@@ -27,9 +27,7 @@ public class ScopeVisitor extends VoidVisitorAdapter<Void> {
         enterScope();
         System.out.println("Visit class " + node.getName());
         for (FieldDeclaration f : node.getFields()) {
-            f.getVariables().forEach(field -> {
-                scopeStack.peek().put("this." + field.getNameAsString(), field.getType());
-            });
+            f.getVariables().forEach(field -> scopeStack.peek().put("this." + field.getNameAsString(), field.getType()));
         }
         super.visit(node, arg);
         trySnapshot(node);
@@ -49,21 +47,17 @@ public class ScopeVisitor extends VoidVisitorAdapter<Void> {
 
     @Override
     public void visit(VariableDeclarationExpr n, Void arg) {
-        n.getVariables().forEach(var -> {
-            var.getRange().ifPresent(r -> {
-                if (r.begin.line <= targetLine) {
-                    scopeStack.peek().put(var.getNameAsString(), var.getType());
-                }
-            });
-        });
+        n.getVariables().forEach(var -> var.getRange().ifPresent(r -> {
+            if (r.begin.line <= targetLine) {
+                scopeStack.peek().put(var.getNameAsString(), var.getType());
+            }
+        }));
         super.visit(n, arg);
     }
 
     @Override
     public void visit(FieldDeclaration f, Void arg) {
-        f.getVariables().forEach(field -> {
-            scopeStack.peek().put("this." + field.getNameAsString(), field.getType());
-        });
+        f.getVariables().forEach(field -> scopeStack.peek().put("this." + field.getNameAsString(), field.getType()));
 
         super.visit(f, arg);
     }
@@ -74,7 +68,7 @@ public class ScopeVisitor extends VoidVisitorAdapter<Void> {
         System.out.println("Visit method " + m.getName());
         for (Parameter param : m.getParameters()) {
             param.getRange().ifPresent(r -> {
-                if (r.begin.line <= targetLine) {
+                if (r.begin.line <= targetLine && scopeStack.peek() != null) {
                     scopeStack.peek().put(param.getNameAsString(), param.getType());
                 }
             });
@@ -91,7 +85,7 @@ public class ScopeVisitor extends VoidVisitorAdapter<Void> {
         System.out.println("Visit constructor " + c.getName());
         for (Parameter param : c.getParameters()) {
             param.getRange().ifPresent(r -> {
-                if (r.begin.line <= targetLine) {
+                if (r.begin.line <= targetLine && scopeStack.peek() != null) {
                     scopeStack.peek().put(param.getNameAsString(), param.getType());
                 }
             });

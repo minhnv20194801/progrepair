@@ -9,11 +9,13 @@ class StackTest {
 
     private Stack<Integer> intStack;
     private Stack<Double> doubleStack;
+    private Stack<String> stringStack;
 
     @BeforeEach
     void setUp() {
         intStack = new Stack<>();
         doubleStack = new Stack<>();
+        stringStack = new Stack<>();
     }
 
     @Test
@@ -56,11 +58,15 @@ class StackTest {
     @Test
     void testPopEmptyStackThrowsException() {
         assertThrows(EmptyStackException.class, () -> intStack.pop(), "Pop on empty stack should throw EmptyStackException");
+        intStack.push(5);
+        assertEquals(5, intStack.pop(), "Pop should not throw on a non-empty stack");
     }
 
     @Test
     void testPeekEmptyStackThrowsException() {
         assertThrows(EmptyStackException.class, () -> intStack.peek(), "Peek on empty stack should throw EmptyStackException");
+        intStack.push(5);
+        assertEquals(5, intStack.peek(), "Peek should not throw on a non-empty stack");
     }
 
     @Test
@@ -71,5 +77,15 @@ class StackTest {
         assertEquals(2.5, doubleStack.peek(), "Peek should work with Double type");
         assertEquals(2.5, doubleStack.pop(), "Pop should work with Double type");
         assertEquals(1.5, doubleStack.peek(), "Peek should return the remaining element");
+    }
+
+    @Test
+    void testGenericStackWorksWithString() {
+        stringStack.push("Hello");
+        stringStack.push("World!");
+
+        assertEquals("World!", stringStack.peek(), "Peek should work with String type");
+        assertEquals("World!", stringStack.pop(), "Pop should work with String type");
+        assertEquals("Hello", stringStack.peek(), "Peek should return the remaining element");
     }
 }

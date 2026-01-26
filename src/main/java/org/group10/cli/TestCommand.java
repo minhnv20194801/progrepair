@@ -26,7 +26,7 @@ public class TestCommand implements Callable<Integer> {
             Program program = new Program(dirPath, classname, new ClassicGenProgMutator(), new RawProgramCrossover(), new TarantulaSuspiciousCalculator(), new WeightedFitnessFunction(1.0, 1.0));
             program.executeTestSuiteWithLog();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
             return 1;
         }
 

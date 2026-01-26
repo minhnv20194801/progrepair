@@ -29,37 +29,27 @@ import java.util.concurrent.Callable;
 )
 public class BenchmarkCommand implements Callable<Integer> {
 
+    private final Map<Integer, Map.Entry<String, String>> benchmarkTargetMap = new HashMap<>();
     @CommandLine.Option(names = {"-b", "--benchmark"}, required = true)
     private int benchmarkTarget;
-
     @CommandLine.Option(names = {"-r", "--runs"}, defaultValue = "10")
     private int runs;
-
     @CommandLine.Option(names = "--pos_weight", defaultValue = "1")
     private double positiveWeight;
-
     @CommandLine.Option(names = "--neg_weight", defaultValue = "10")
     private double negativeWeight;
-
     @CommandLine.Option(names = {"-m", "--mutation"}, defaultValue = "0.06")
     private double mutationWeight;
-
     @CommandLine.Option(names = {"-p", "--population"}, defaultValue = "40")
     private int populationSize;
-
     @CommandLine.Option(names = {"-g", "--generation"}, defaultValue = "200")
     private int maxGeneration;
-
     @CommandLine.Option(names = {"-fl", "--fault_localization"}, defaultValue = "ochiai")
     private String faultLocalization;
-
     @CommandLine.Option(names = {"--multiclassmutation"}, defaultValue = "false")
     private boolean canGetFixFromDifferentClasses;
-
     @CommandLine.Option(names = {"-out", "--output_dir"})
     private String outputDir;
-
-    private Map<Integer, Map.Entry<String, String>> benchmarkTargetMap = new HashMap<>();
 
     private void setupBenchmarkTargetMap() {
         benchmarkTargetMap.put(
@@ -118,7 +108,7 @@ public class BenchmarkCommand implements Callable<Integer> {
 
             return program;
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
             System.err.println("Fail to set up inital program");
             System.exit(1);
         }
@@ -141,19 +131,13 @@ public class BenchmarkCommand implements Callable<Integer> {
         Crossover<Program> crossover = setupRawProgramCrossover();
         SuspiciousCalculator suspiciousCalculator;
         faultLocalization = faultLocalization.toLowerCase();
-        switch (faultLocalization) {
-            case "ochiai":
-                suspiciousCalculator = setupOchiaiSuspiciousCalculator();
-                break;
-            case "tarantula":
-                suspiciousCalculator = setupTarantulaSuspiciousCalculator();
-                break;
-            default:
-                suspiciousCalculator = setupOchiaiSuspiciousCalculator();
-                break;
-        }
+        suspiciousCalculator = switch (faultLocalization) {
+            case "ochiai" -> setupOchiaiSuspiciousCalculator();
+            case "tarantula" -> setupTarantulaSuspiciousCalculator();
+            default -> setupOchiaiSuspiciousCalculator();
+        };
 
-        FitnessFunction fitnessFunction =
+        FitnessFunction<Program> fitnessFunction =
                 setupWeightedFitnessFunction(positiveWeight, negativeWeight);
 
         String dirPath = benchmarkTargetMap.get(benchmarkTarget).getKey();

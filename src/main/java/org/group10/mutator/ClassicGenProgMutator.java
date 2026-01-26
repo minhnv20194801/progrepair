@@ -38,17 +38,15 @@ public class ClassicGenProgMutator implements Mutator<Program> {
         Map<Integer, Double> suspiciousScores = program.getSuspiciousScore();
 
         // Incase method or constructor is empty, add an empty statement inside it
-        cu.findAll(MethodDeclaration.class).forEach(method -> {
-            method.getBody().ifPresent(body -> {
-                if (body.isEmpty()) {
-                    EmptyStmt empty = new EmptyStmt();
-                    body.getRange().ifPresent(r ->
-                            empty.setRange(new Range(r.end, r.end))
-                    );
-                    body.addStatement(empty);
-                }
-            });
-        });
+        cu.findAll(MethodDeclaration.class).forEach(method -> method.getBody().ifPresent(body -> {
+            if (body.isEmpty()) {
+                EmptyStmt empty = new EmptyStmt();
+                body.getRange().ifPresent(r ->
+                        empty.setRange(new Range(r.end, r.end))
+                );
+                body.addStatement(empty);
+            }
+        }));
         cu.findAll(ConstructorDeclaration.class).forEach(constructor -> {
             BlockStmt body = constructor.getBody();
             if (body.isEmpty()) {
@@ -112,7 +110,7 @@ public class ClassicGenProgMutator implements Mutator<Program> {
             Optional<Node> parentOpt = targetNode.getParentNode();
             parentOpt.ifPresent(parent -> {
                 if (parent instanceof NodeWithStatements nodeWithStatements) {
-                    NodeList stmts = nodeWithStatements.getStatements();
+                    NodeList<Statement> stmts = nodeWithStatements.getStatements();
                     int idx = stmts.indexOf(targetNode);
                     if (idx != -1) {
                         stmts.add(idx, (Statement) insertTarget.clone());
