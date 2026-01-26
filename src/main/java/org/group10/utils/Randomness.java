@@ -2,6 +2,12 @@ package org.group10.utils;
 
 import java.util.*;
 
+/**
+ * Utility class for randomness-related operations. <br>
+ *
+ * Provides a shared {@link Random} instance and methods for generating
+ * random values with specific behavior.
+ */
 public class Randomness {
     private static final Random RANDOM = new Random();
 

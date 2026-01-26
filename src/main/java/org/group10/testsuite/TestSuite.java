@@ -32,18 +32,30 @@ import java.util.stream.Stream;
 
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectMethod;
 
+/**
+ * Represents a test suite for a specific Java class. <br>
+ *
+ * The class containing the source code of the test suite, and methods
+ * to execute the tests on a target program <br>
+ *
+ * It supports both silent execution and execution with logs.
+ */
 public class TestSuite {
     private final List<String> codes = new ArrayList<>();
-    private int numberOfTests;
 
+    /**
+     * Constructs a {@link TestSuite} from a Java test file. <br>
+     *
+     * Reads the test file line by line, counts the number of tests (annotated with {@link Test}),
+     * and stores the source code for later compilation and execution.
+     *
+     * @param path the path to the Java test file
+     */
     public TestSuite(String path) {
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
             String line;
             while ((line = br.readLine()) != null) {
                 codes.add(line);
-                if (line.contains("@Test")) {
-                    numberOfTests++;
-                }
             }
         } catch (IOException e) {
             System.err.println("ERROR: Can't find test suite");
@@ -51,6 +63,21 @@ public class TestSuite {
         }
     }
 
+    /**
+     * Executes all tests of this test suite on a given {@link Program}.
+     * <p>
+     * This method compiles both the target program and the test suite, instruments
+     * the classes to track code coverage, and executes each test individually.
+     * It updates the target program's statistics:
+     * <ul>
+     *     <li>{@link Program#getEfs()} and {@link Program#getNfs()} for failed tests</li>
+     *     <li>{@link Program#getEps()} and {@link Program#getNps()} for successful tests</li>
+     * </ul>
+     *
+     * @param targetProgram the program on which tests will be executed
+     * @param isShowLog     a boolean flag to print compilation and test execution logs
+     * @throws Exception if any I/O, compilation, or reflection error occurs
+     */
     public void executeTests(Program targetProgram, boolean isShowLog) throws Exception {
         if (targetProgram.isNotCompilable()) {
             if (isShowLog) {
@@ -113,6 +140,7 @@ public class TestSuite {
                                 testClasses.add(className);
                                 loader.addClass(className, classBytes);
                             } else {
+                                // If the class is not a test, then instrument the class
                                 byte[] instrumented = CoverageInstrumenter.instrument(classBytes);
                                 loader.addClass(className, instrumented);
                             }
@@ -199,7 +227,13 @@ public class TestSuite {
         FolderCleaner.cleanTmpDir(targetProgram.getClassName());
     }
 
-
+    /**
+     * Writes the test suite source code to a specified directory.
+     *
+     * @param outputDir the directory to write the test file to
+     * @param className the base name for the test file (e.g., "MyClass" -> "MyClassTest.java")
+     * @throws Exception if an I/O error occurs while writing the file
+     */
     public void toFile(String outputDir, String className) throws Exception {
         Path dir = Paths.get(outputDir);
         Files.createDirectories(dir);

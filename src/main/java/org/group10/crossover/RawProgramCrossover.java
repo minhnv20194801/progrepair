@@ -8,7 +8,28 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A crossover operator that performs a single-point crossover directly on the
+ * raw source code lines of two {@link Program} instances. The other components
+ * of the {@link Program} like mutator, fitness function, test suite, etc., are
+ * preserved from the respective parent. <br>
+ *
+ * It called RawProgramCrossover because the class only attempt to perform crossover
+ * between two {@link Program} on raw code-line level.
+ */
 public class RawProgramCrossover implements Crossover<Program> {
+    /**
+     * Performs a single-point crossover between two parent programs. <br>
+     *
+     * A random crossover point is chosen within the bounds of the shorter
+     * parent program. Lines before this index are copied from each parent
+     * into the corresponding child, while the remaining lines are swapped
+     * between the parents.
+     *
+     * @param parent1 the first parent program
+     * @param parent2 the second parent program
+     * @return a {@link Map.Entry} containing the two newly created child programs
+     */
     @Override
     public Map.Entry<Program, Program> crossover(Program parent1, Program parent2) {
         List<String> parentCodes1 = parent1.getCodes().stream()

@@ -20,9 +20,47 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * A mutation operator based on the classic GenProg approach. <br>
+ *
+ * This mutator operates on the abstract syntax tree (AST) of a
+ * {@link Program} and applies one of three mutation actions at evenly distributions:
+ * <ul>
+ *   <li><b>Insert</b>: inserts a randomly selected statement before a
+ *       suspicious statement</li>
+ *   <li><b>Delete</b>: removes a suspicious statement</li>
+ *   <li><b>Swap</b>: swaps a suspicious statement with another randomly
+ *       selected statement</li>
+ * </ul>
+ * <br>
+ * The target statement is selected using weighted randomness based on
+ * suspiciousness scores computed at the line level. <br>
+ *
+ * If the program is not compilable, cannot be parsed, or contains no
+ * suspicious statements, the original program is returned unchanged (no mutation possible).
+ */
 public class ClassicGenProgMutator implements Mutator<Program> {
+    /**
+     * Boolean flag to determine if the donors can come from different classes.
+     */
     private boolean canGetFixFromDifferentClass = false;
 
+    /**
+     * Applies a mutation to the given program. <br>
+     *
+     * The program is first parsed into an AST. Suspicious statements are
+     * identified using the program's suspiciousness scores, and one of the
+     * mutation operations (insert, delete, or swap) is selected at random
+     * distribution. <br>
+     *
+     * Empty statements may be temporarily inserted to allow mutation of
+     * empty method or constructor bodies; these placeholders are removed
+     * before returning the mutated program. <br>
+     *
+     * @param program the program to mutate
+     * @return a mutated version of the program, or the original program if
+     *         mutation is not possible
+     */
     @Override
     public Program mutate(Program program) {
         if (program.isNotCompilable()) {
@@ -89,10 +127,27 @@ public class ClassicGenProgMutator implements Mutator<Program> {
         return new Program(program.getClassName(), mutatedCu.toString().lines().toList(), program.getTestSuite(), program.getMutator(), program.getCrossover(), program.getSuspiciousCalculator(), program.getFitnessFunction());
     }
 
+    /**
+     * Parses the given program into a {@link CompilationUnit}.
+     *
+     * @param program the program to parse
+     * @return the parsed compilation unit
+     */
     private CompilationUnit parseAST(Program program) {
         return StaticJavaParser.parse(program.toString());
     }
 
+    /**
+     * Inserts a randomly selected statement (donor) before the statement located
+     * at the given line number. <br>
+     *
+     * NOTE: If insert throws any exception, or no possible insert can be made,
+     * then it silently return the original program.
+     *
+     * @param cu the compilation unit to modify
+     * @param lineNumber the target line number
+     * @return the modified compilation unit
+     */
     private CompilationUnit insert(CompilationUnit cu, int lineNumber) {
         // Find the first node that starts at insertTarget
         Optional<Node> targetNodeOpt = cu.findAll(Node.class).stream()
@@ -106,7 +161,7 @@ public class ClassicGenProgMutator implements Mutator<Program> {
             if (insertTarget == null) {
                 return cu;
             }
-//            System.out.println("Insert " + insertTarget.getRange().get().begin.line + " before " + lineNumber);
+
             Optional<Node> parentOpt = targetNode.getParentNode();
             parentOpt.ifPresent(parent -> {
                 if (parent instanceof NodeWithStatements nodeWithStatements) {
@@ -122,8 +177,14 @@ public class ClassicGenProgMutator implements Mutator<Program> {
         return cu;
     }
 
+    /**
+     * Deletes the statement located at the given line number.
+     *
+     * @param cu the compilation unit to modify
+     * @param lineNumber the line number of the statement to delete
+     * @return the modified compilation unit
+     */
     private CompilationUnit delete(CompilationUnit cu, int lineNumber) {
-//        System.out.println("Delete line " + lineNumber);
         cu.findAll(Node.class).stream()
                 .filter(n -> n.getRange().map(r -> r.begin.line == lineNumber).orElse(false))
                 .findFirst()
@@ -132,6 +193,17 @@ public class ClassicGenProgMutator implements Mutator<Program> {
         return cu;
     }
 
+    /**
+     * Swaps the statement located at the given line number with another
+     * randomly selected statement (donor). <br>
+     *
+     * NOTE: If swap throws any exception, or no possible swap can be made,
+     * then it silently return the original program.
+     *
+     * @param cu the compilation unit to modify
+     * @param lineNumber the target line number
+     * @return the modified compilation unit
+     */
     private CompilationUnit swap(CompilationUnit cu, int lineNumber) {
         Optional<Node> targetNodeOpt = cu.findAll(Node.class).stream()
                 .filter(n -> n.getRange().map(r -> r.begin.line == lineNumber).orElse(false))
@@ -145,7 +217,6 @@ public class ClassicGenProgMutator implements Mutator<Program> {
                 return cu;
             }
             Node tmpNode = targetNode.clone();
-//            System.out.println("Swap " + swappedNode.getRange().get().begin.line + " with " + lineNumber);
 
             try {
                 targetNode.replace(swappedNode.clone());
@@ -159,14 +230,38 @@ public class ClassicGenProgMutator implements Mutator<Program> {
         return cu;
     }
 
+    /**
+     * Selects a random statement in the program. <br>
+     *
+     * Block statements are excluded, and the target node itself is not
+     * selected. </br>
+     *
+     * NOTE: the field {@code canGetFixFromDifferentClass} will affect this method.
+     * If it is {@code true} then the result of the method can come from different class
+     * of the {@code targetNode}. <br>
+     * Otherwise, the result of the method can only come from within the same class
+     * as the {@code targetNode}. <br>
+     *
+     * @param cu the compilation unit
+     * @param targetNode the node being mutated
+     * @return a randomly selected statement, or {@code null} if none exist
+     */
     private Node getRandomStmt(CompilationUnit cu, Node targetNode) {
-        ClassOrInterfaceDeclaration targetClass =
-                targetNode.findAncestor(ClassOrInterfaceDeclaration.class).get();
+        List<Statement> statements;
+        if (canGetFixFromDifferentClass) {
+            statements = cu.findAll(Statement.class)
+                    .stream()
+                    .filter(s -> !(s instanceof BlockStmt) && !(s.equals(targetNode) && !(s instanceof EmptyStmt)))
+                    .toList();
+        } else {
+            ClassOrInterfaceDeclaration targetClass =
+                    targetNode.findAncestor(ClassOrInterfaceDeclaration.class).get();
 
-        List<Statement> statements = targetClass.findAll(Statement.class)
-                .stream()
-                .filter(s -> !(s instanceof BlockStmt) && !(s.equals(targetNode) && !(s instanceof EmptyStmt)))
-                .toList();
+            statements = targetClass.findAll(Statement.class)
+                    .stream()
+                    .filter(s -> !(s instanceof BlockStmt) && !(s.equals(targetNode) && !(s instanceof EmptyStmt)))
+                    .toList();
+        }
 
         if (statements.isEmpty()) {
             return null;
@@ -182,6 +277,12 @@ public class ClassicGenProgMutator implements Mutator<Program> {
         return "ClassicGenProgMutator get fixes from different classes: " + canGetFixFromDifferentClass;
     }
 
+    /**
+     * Configures whether fixes may be taken from different classes.
+     *
+     * @param canGetFixFromDifferentClass {@code true} to allow cross-class donors;
+     *                                    {@code false} otherwise
+     */
     public void setCanGetFixFromDifferentClass(boolean canGetFixFromDifferentClass) {
         this.canGetFixFromDifferentClass = canGetFixFromDifferentClass;
     }

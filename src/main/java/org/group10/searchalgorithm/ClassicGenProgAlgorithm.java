@@ -8,12 +8,39 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+
+/**
+ * An implementation based on classic GenProg search algorithm for automated program repair. <br>
+ *
+ * The algorithm stops when either a program reaches maximum fitness (all tests pass) or
+ * the maximum number of generations is reached. <br>
+ *
+ * NOTE: a notable difference from classic GenProg search algorithm is that non-compilable
+ * crossover/mutation results are throw immediately without getting chance in the next
+ * generation
+ *
+ */
 public class ClassicGenProgAlgorithm implements SearchAlgorithm<Program> {
     private final int populationSize;
     private final int maxGeneration;
     private final double mutationWeight;
     private final Selection<Program> selector;
 
+    /**
+     * Constructs a ClassicGenProgAlgorithm with the given parameters. <br>
+     *
+     * Default values are used if the provided values are non-positive:
+     * <ul>
+     *     <li>populationSize: 40</li>
+     *     <li>maxGeneration: 20</li>
+     *     <li>mutationWeight: 0.06</li>
+     * </ul>
+     *
+     * @param populationSize number of programs in each generation
+     * @param maxGeneration maximum number of generations to evolve
+     * @param mutationWeight probability of mutating an individual program
+     * @param selector selection strategy used to pick parents for crossover
+     */
     public ClassicGenProgAlgorithm(final int populationSize, final int maxGeneration, final double mutationWeight, final Selection<Program> selector) {
         this.populationSize = (populationSize > 0) ? populationSize : 40;
         this.maxGeneration = (maxGeneration > 0) ? maxGeneration : 20;
@@ -21,6 +48,19 @@ public class ClassicGenProgAlgorithm implements SearchAlgorithm<Program> {
         this.selector = selector;
     }
 
+    /**
+     * Initializes the population of programs for the first generation. <br>
+     *
+     * The initial population consists of the original program and mutated versions
+     * of it until the population reaches {@link #populationSize}. <br>
+     *
+     * NOTE: There can be duplicate programs in the initial population, so the tool
+     * does not stuck here because the degree of freedom in the mutation operation is
+     * less than the {@code populationSize}.
+     *
+     * @param originalProgram the program to base the initial population on
+     * @return a list of programs representing the initial population
+     */
     private List<Program> initializePopulation(Program originalProgram) {
         List<Program> population = new ArrayList<>();
         population.add(originalProgram);
@@ -31,6 +71,15 @@ public class ClassicGenProgAlgorithm implements SearchAlgorithm<Program> {
         return population;
     }
 
+    /**
+     * Performs the GenProg search starting from the given program. <br>
+     *
+     * The search stops early if a program achieves maximum fitness,
+     * otherwise it returns the best program after reaching {@link #maxGeneration}.
+     *
+     * @param startPoint the initial program to start the search
+     * @return the program with the highest fitness found during the search
+     */
     @Override
     public Program search(Program startPoint) {
         System.out.println("*********************************************************");

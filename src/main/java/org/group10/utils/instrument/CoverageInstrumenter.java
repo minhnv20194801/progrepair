@@ -2,8 +2,25 @@ package org.group10.utils.instrument;
 
 import org.objectweb.asm.*;
 
+/**
+ * Utility class for instrumenting Java bytecode to track code coverage. <br>
+ *
+ * This class uses the ASM library to modify the bytecode of a given class
+ * such that every line number in the class triggers a call to
+ * {@link CoverageTracker#hit(int)} when executed.
+ */
 public class CoverageInstrumenter {
-
+     /**
+     * Instruments the given class byte array to add coverage tracking.
+     * <p>
+     * For every line number in the class, this method injects a call to
+     * {@link CoverageTracker#hit(int)}, allowing coverage tools to record
+     * which lines have been executed.
+     * </p>
+     *
+     * @param originalClass the original class as a byte array
+     * @return a new byte array representing the instrumented class
+     */
     public static byte[] instrument(byte[] originalClass) {
         ClassReader cr = new ClassReader(originalClass);
         ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);

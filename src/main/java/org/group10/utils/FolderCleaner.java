@@ -8,6 +8,14 @@ import java.nio.file.Paths;
 
 import static com.google.common.io.MoreFiles.deleteRecursively;
 
+/**
+ * Utility class for cleaning temporary directories. <br>
+ *
+ * Created because the temporary directories that was not cleaned
+ * properly crashed my laptop and made it non-bootable. <br>
+ *
+ * Which is why I suggest running this project with docker
+ */
 public class FolderCleaner {
     public static void cleanTmpDir(String prefix) {
         Path tmpDir = Paths.get(System.getProperty("java.io.tmpdir"));
