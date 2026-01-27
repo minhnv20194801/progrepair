@@ -75,13 +75,16 @@ public class TestSuite {
      * </ul>
      *
      * @param targetProgram the program on which tests will be executed
-     * @param isShowLog     a boolean flag to print compilation and test execution logs
+     * @param withLog     a boolean flag to print compilation and test execution logs
      * @throws Exception if any I/O, compilation, or reflection error occurs
      */
-    public void executeTests(Program targetProgram, boolean isShowLog) throws Exception {
-        if (targetProgram.isNotCompilable()) {
-            if (isShowLog) {
+    public void executeTests(Program targetProgram, boolean withLog) throws Exception {
+        try {
+            targetProgram.tryCompile(withLog);
+        } catch (Exception e) {
+            if (withLog) {
                 System.out.println("Program is not compilable");
+                System.err.println(e.getMessage());
             }
             // if program is not compilable then silently return
             return;
@@ -102,7 +105,7 @@ public class TestSuite {
         }
 
         // dummyOutputStream so the compiler error or warning does not go out
-        OutputStream dummyOutputStream = isShowLog ? null : new DummyOutputStream();
+        OutputStream dummyOutputStream = withLog ? null : new DummyOutputStream();
 
         int result = compiler.run(
                 null,
@@ -115,7 +118,7 @@ public class TestSuite {
         );
 
         if (result != 0) {
-            if (isShowLog) {
+            if (withLog) {
                 System.err.println("Test Suite compile failure");
             }
             FolderCleaner.cleanTmpDir(targetProgram.getClassName());
@@ -157,7 +160,7 @@ public class TestSuite {
             List<String> positiveTests = new ArrayList<>();
             List<String> negativeTests = new ArrayList<>();
 
-            if (isShowLog) {
+            if (withLog) {
                 System.out.println("==========================");
                 System.out.println("TEST SUMMARY: " + targetProgram.getClassName());
                 System.out.println("==========================");
@@ -168,7 +171,7 @@ public class TestSuite {
                 for (Method m : testClass.getDeclaredMethods()) {
                     if (m.isAnnotationPresent(Test.class)) {
                         CoverageTracker.reset();
-                        if (isShowLog) {
+                        if (withLog) {
                             System.out.print("Executing test " + testClass.getSimpleName() + "@" + m.getName() + ": ");
                         }
                         LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
@@ -191,7 +194,7 @@ public class TestSuite {
                                 }
                             }
 
-                            if (isShowLog) {
+                            if (withLog) {
                                 System.out.println("✅");
                             }
                         } else {
@@ -206,7 +209,7 @@ public class TestSuite {
                                 }
                             }
 
-                            if (isShowLog) {
+                            if (withLog) {
                                 System.out.println("❌");
                             }
                         }
@@ -217,7 +220,7 @@ public class TestSuite {
             targetProgram.setPositiveTests(positiveTests);
             targetProgram.setNegativeTests(negativeTests);
 
-            if (isShowLog) {
+            if (withLog) {
                 System.out.println((positiveTests.size() + negativeTests.size()) + " tests executed");
                 System.out.println(positiveTests.size() + " tests successful");
                 System.out.println(negativeTests.size() + " tests failed");

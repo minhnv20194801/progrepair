@@ -139,6 +139,10 @@ public class RepairCommand implements Callable<Integer> {
                 setupInitialProgram(dirPath, classname,
                         mutator, crossover,
                         suspiciousCalculator, fitnessFunction);
+        if (initialProgram.isNotCompilable()) {
+            System.err.println("Error: program is not compilable");
+            return 1;
+        }
 
         Selection<Program> selection = setupBinaryTournamentSelection();
         SearchAlgorithm<Program> searchAlgorithm =

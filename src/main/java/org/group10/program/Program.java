@@ -134,34 +134,42 @@ public class Program implements Cloneable {
      */
     public boolean isNotCompilable() {
         try {
-            long id = ProcessHandle.current().pid();
-            Path outputDir = Files.createTempDirectory(className + id + "compiled_");
+            tryCompile(false);
 
-            Path javaFile = outputDir.resolve(className + ".java");
-            Files.write(javaFile, codes);
-
-            JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-
-            if (compiler == null) {
-                FolderCleaner.cleanTmpDir(className);
-                return true;
-            }
-
-            // dummyOutputStream so the compiler error or warning does not go out
-            OutputStream dummyOutputStream = new DummyOutputStream();
-
-            int result = compiler.run(
-                    null,
-                    dummyOutputStream,
-                    dummyOutputStream,
-                    javaFile.toString()
-            );
-
-            FolderCleaner.cleanTmpDir(className);
-            return result != 0;
+            return false;
         } catch (Exception e) {
-            FolderCleaner.cleanTmpDir(className);
             return true;
+        }
+    }
+
+    public void tryCompile(boolean withLog) throws Exception {
+        long id = ProcessHandle.current().pid();
+        Path outputDir = Files.createTempDirectory(className + id + "compiled_");
+
+        Path javaFile = outputDir.resolve(className + ".java");
+        Files.write(javaFile, codes);
+
+        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+
+        if (compiler == null) {
+            FolderCleaner.cleanTmpDir(className);
+            throw new IllegalStateException("Can not find java compiler from the system");
+        }
+
+        // dummyOutputStream so the compiler error or warning does not go out
+        OutputStream dummyOutputStream = withLog ? null : new DummyOutputStream();
+
+        int result = compiler.run(
+                null,
+                dummyOutputStream,
+                dummyOutputStream,
+                javaFile.toString()
+        );
+
+        FolderCleaner.cleanTmpDir(className);
+
+        if (result != 0) {
+            throw new Exception("Unknown compile error");
         }
     }
 

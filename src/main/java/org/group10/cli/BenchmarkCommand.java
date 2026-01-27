@@ -117,13 +117,17 @@ public class BenchmarkCommand implements Callable<Integer> {
     private Program setupInitialProgram(String dirPath, String className, Mutator<Program> mutator, Crossover<Program> crossover, SuspiciousCalculator suspiciousCalculator, FitnessFunction<Program> fitnessFunction) {
         try {
             Program program = new Program(dirPath, className, mutator, crossover, suspiciousCalculator, fitnessFunction);
+            program.executeTestSuiteWithLog();
             program.getFitness();
             program.getSuspiciousScore();
-
             return program;
         } catch (IOException e) {
             System.err.println(e.getMessage());
             System.err.println("Fail to set up inital program");
+            System.exit(1);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            System.err.println("Fail to set up inital program. Unknown error occured");
             System.exit(1);
         }
 
@@ -171,6 +175,10 @@ public class BenchmarkCommand implements Callable<Integer> {
                         mutator, crossover,
                         suspiciousCalculator, fitnessFunction);
 
+        if (initialProgram.isNotCompilable()) {
+            System.err.println("Error: program is not compilable");
+            return 1;
+        }
         Selection<Program> selection = setupBinaryTournamentSelection();
         SearchAlgorithm<Program> searchAlgorithm =
                 setupSearchAlgorithm(populationSize, maxGeneration,
