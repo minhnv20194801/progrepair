@@ -4,6 +4,7 @@ import org.group10.crossover.Crossover;
 import org.group10.crossover.RawProgramCrossover;
 import org.group10.fitness.FitnessFunction;
 import org.group10.fitness.WeightedFitnessFunction;
+import org.group10.mutator.BinaryExprModifiableMutator;
 import org.group10.mutator.ClassicGenProgMutator;
 import org.group10.mutator.Mutator;
 import org.group10.program.Program;
@@ -46,8 +47,10 @@ public class BenchmarkCommand implements Callable<Integer> {
     private int maxGeneration;
     @CommandLine.Option(names = {"-fl", "--fault_localization"}, defaultValue = "ochiai")
     private String faultLocalization;
-    @CommandLine.Option(names = {"--multiclassmutation"}, defaultValue = "false")
+    @CommandLine.Option(names = {"--multiclass_mutation"}, defaultValue = "false")
     private boolean canGetFixFromDifferentClasses;
+    @CommandLine.Option(names = {"--mutate_binaryexprs"}, defaultValue = "false")
+    private boolean alsoMutateBinaryExprs;
     @CommandLine.Option(names = {"-out", "--output_dir"})
     private String outputDir;
 
@@ -76,10 +79,21 @@ public class BenchmarkCommand implements Callable<Integer> {
                 4,
                 Map.entry("./benchmark/Shop_buggy/", "Shop")
         );
+
+        benchmarkTargetMap.put(
+                5,
+                Map.entry("./benchmark/BinaryExprExamples_buggy/", "BinaryExprExamples")
+        );
     }
 
     private Mutator<Program> setupClassicMutator(boolean canGetFixFromDifferentClasses) {
         ClassicGenProgMutator mutator = new ClassicGenProgMutator();
+        mutator.setCanGetFixFromDifferentClass(canGetFixFromDifferentClasses);
+        return mutator;
+    }
+
+    private Mutator<Program> setupBinaryExprModifiableMutator(boolean canGetFixFromDifferentClasses) {
+        ClassicGenProgMutator mutator = new BinaryExprModifiableMutator();
         mutator.setCanGetFixFromDifferentClass(canGetFixFromDifferentClasses);
         return mutator;
     }
@@ -127,7 +141,17 @@ public class BenchmarkCommand implements Callable<Integer> {
     @Override
     public Integer call() {
         setupBenchmarkTargetMap();
-        Mutator<Program> mutator = setupClassicMutator(canGetFixFromDifferentClasses);
+        if (!benchmarkTargetMap.containsKey(benchmarkTarget)) {
+            System.err.println("Error: benchmark target not defined");
+            System.err.println("Defined benchmark tagets:" + benchmarkTargetMap);
+            System.exit(1);
+        }
+        Mutator<Program> mutator;
+        if (alsoMutateBinaryExprs) {
+            mutator = setupBinaryExprModifiableMutator(canGetFixFromDifferentClasses);
+        } else {
+            mutator = setupClassicMutator(canGetFixFromDifferentClasses);
+        }
         Crossover<Program> crossover = setupRawProgramCrossover();
         SuspiciousCalculator suspiciousCalculator;
         faultLocalization = faultLocalization.toLowerCase();

@@ -3,7 +3,6 @@ package org.group10.mutator;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.expr.BinaryExpr;
 import org.group10.program.Program;
-import org.group10.program.RawSingleFileProgram;
 import org.group10.utils.Randomness;
 
 import java.util.ArrayList;
@@ -28,7 +27,7 @@ public class BinaryExprModifiableMutator extends ClassicGenProgMutator {
      *         mutation is not possible
      */
     @Override
-    public RawSingleFileProgram mutate(RawSingleFileProgram program) {
+    public Program mutate(Program program) {
         if (program.isNotCompilable()) {
             return program;
         }
@@ -73,7 +72,7 @@ public class BinaryExprModifiableMutator extends ClassicGenProgMutator {
             BinaryExpr.Operator newOperator = getRandomOperator(targetOperator);
             targetExpr.setOperator(newOperator);
 
-            return new RawSingleFileProgram(program.getClassName(), cu.toString().lines().toList(), program.getTestSuite(), program.getMutator(), program.getCrossover(), program.getSuspiciousCalculator(), program.getFitnessFunction());
+            return new Program(program.getClassName(), cu.toString().lines().toList(), program.getTestSuite(), program.getMutator(), program.getCrossover(), program.getSuspiciousCalculator(), program.getFitnessFunction());
         }
     }
 

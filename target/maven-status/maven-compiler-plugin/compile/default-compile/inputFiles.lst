@@ -18,6 +18,7 @@
 /home/minhnv/git/progrepair/src/main/java/org/group10/program/Program.java
 /home/minhnv/git/progrepair/src/main/java/org/group10/selection/ProgramBinaryTournamentSlection.java
 /home/minhnv/git/progrepair/src/main/java/org/group10/suspiciouscalculator/SuspiciousCalculator.java
+/home/minhnv/git/progrepair/src/main/java/org/group10/mutator/BinaryExprModifiableMutator.java
 /home/minhnv/git/progrepair/src/main/java/org/group10/utils/Randomness.java
 /home/minhnv/git/progrepair/src/main/java/org/group10/utils/instrument/InstrumentingClassLoader.java
 /home/minhnv/git/progrepair/src/main/java/org/group10/cli/BenchmarkCommand.java

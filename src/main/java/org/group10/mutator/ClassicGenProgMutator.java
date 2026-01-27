@@ -43,7 +43,7 @@ public class ClassicGenProgMutator implements Mutator<Program> {
     /**
      * Boolean flag to determine if the donors can come from different classes.
      */
-    private boolean canGetFixFromDifferentClass = false;
+    protected boolean canGetFixFromDifferentClass = false;
 
     /**
      * Applies a mutation to the given program. <br>
@@ -75,13 +75,15 @@ public class ClassicGenProgMutator implements Mutator<Program> {
         }
         Map<Integer, Double> suspiciousScores = program.getSuspiciousScore();
 
+        List<Integer> insertedEmptyStmtLines = new ArrayList<>();
         // Incase method or constructor is empty, add an empty statement inside it
         cu.findAll(MethodDeclaration.class).forEach(method -> method.getBody().ifPresent(body -> {
             if (body.isEmpty()) {
                 EmptyStmt empty = new EmptyStmt();
-                body.getRange().ifPresent(r ->
-                        empty.setRange(new Range(r.end, r.end))
-                );
+                body.getRange().ifPresent(r -> {
+                    insertedEmptyStmtLines.add(r.end.line);
+                    empty.setRange(new Range(r.end, r.end));
+                });
                 body.addStatement(empty);
             }
         }));
@@ -89,9 +91,10 @@ public class ClassicGenProgMutator implements Mutator<Program> {
             BlockStmt body = constructor.getBody();
             if (body.isEmpty()) {
                 EmptyStmt empty = new EmptyStmt();
-                body.getRange().ifPresent(r ->
-                        empty.setRange(new Range(r.end, r.end))
-                );
+                body.getRange().ifPresent(r -> {
+                    insertedEmptyStmtLines.add(r.end.line);
+                    empty.setRange(new Range(r.end, r.end));
+                });
                 body.addStatement(empty);
             }
         });
@@ -113,12 +116,19 @@ public class ClassicGenProgMutator implements Mutator<Program> {
 
         int targetLine = Randomness.getRandomIntegerWithWeighted(suspiciousScores);
         CompilationUnit mutatedCu;
-        int choice = Randomness.getRandom().nextInt(3);
+        // 3 choices: insert, delete, swap
+        int maxChoices = 3;
+        // If the target line is our inserted empty statement then the
+        // delete mutation will changes nothing and thus be removed
+        if (insertedEmptyStmtLines.contains(targetLine)) {
+            maxChoices--;
+        }
+        int choice = Randomness.getRandom().nextInt(maxChoices);
 
         switch (choice) {
             case 0 -> mutatedCu = insert(cu, targetLine);
-            case 1 -> mutatedCu = delete(cu, targetLine);
-            case 2 -> mutatedCu = swap(cu, targetLine);
+            case 1 -> mutatedCu = swap(cu, targetLine);
+            case 2 -> mutatedCu = delete(cu, targetLine);
             default -> mutatedCu = cu;
         }
         // Clean all inserted EmptyStmt
@@ -133,7 +143,7 @@ public class ClassicGenProgMutator implements Mutator<Program> {
      * @param program the program to parse
      * @return the parsed compilation unit
      */
-    private CompilationUnit parseAST(Program program) {
+    protected CompilationUnit parseAST(Program program) {
         return StaticJavaParser.parse(program.toString());
     }
 
@@ -251,7 +261,7 @@ public class ClassicGenProgMutator implements Mutator<Program> {
         if (canGetFixFromDifferentClass) {
             statements = cu.findAll(Statement.class)
                     .stream()
-                    .filter(s -> !(s instanceof BlockStmt) && !(s.equals(targetNode) && !(s instanceof EmptyStmt)))
+                    .filter(s -> !(s instanceof BlockStmt) && !s.equals(targetNode) && !(s instanceof EmptyStmt))
                     .toList();
         } else {
             ClassOrInterfaceDeclaration targetClass =
@@ -259,7 +269,7 @@ public class ClassicGenProgMutator implements Mutator<Program> {
 
             statements = targetClass.findAll(Statement.class)
                     .stream()
-                    .filter(s -> !(s instanceof BlockStmt) && !(s.equals(targetNode) && !(s instanceof EmptyStmt)))
+                    .filter(s -> !(s instanceof BlockStmt) && !s.equals(targetNode) && !(s instanceof EmptyStmt))
                     .toList();
         }
 

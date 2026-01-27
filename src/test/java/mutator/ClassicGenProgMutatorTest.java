@@ -5,8 +5,7 @@ import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.stmt.Statement;
 import org.group10.mutator.ClassicGenProgMutator;
-import org.group10.mutator.Mutator;
-import org.group10.program.RawSingleFileProgram;
+import org.group10.program.Program;
 import org.group10.suspiciouscalculator.OchiaiSuspiciousCalculator;
 import org.group10.suspiciouscalculator.SuspiciousCalculator;
 import org.group10.utils.Randomness;
@@ -18,9 +17,9 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ClassicGenProgMutatorTest {
-    RawSingleFileProgram shopProgram;
-    RawSingleFileProgram intCalculatorProgram;
-    Mutator<RawSingleFileProgram> mutator;
+    Program shopProgram;
+    Program intCalculatorProgram;
+    ClassicGenProgMutator mutator;
     SuspiciousCalculator suspiciousCalculator;
 
     @BeforeEach
@@ -29,20 +28,19 @@ class ClassicGenProgMutatorTest {
         config.setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_18);
         StaticJavaParser.setConfiguration(config);
 
-        Random random = new Random(1306);
-        Randomness.setRandom(random);
+        Randomness.getRandom().setSeed(1306);
         mutator = new ClassicGenProgMutator();
         suspiciousCalculator = new OchiaiSuspiciousCalculator();
-        shopProgram = new RawSingleFileProgram("./benchmark/Shop_buggy/", "Shop", mutator, null, suspiciousCalculator, null);
+        shopProgram = new Program("./benchmark/Shop_buggy/", "Shop", mutator, null, suspiciousCalculator, null);
         shopProgram.executeTestSuite();
-        intCalculatorProgram = new RawSingleFileProgram("./benchmark/IntCalculator_buggy/", "IntCalculator", mutator, null, suspiciousCalculator, null);
+        intCalculatorProgram = new Program("./benchmark/IntCalculator_buggy/", "IntCalculator", mutator, null, suspiciousCalculator, null);
         intCalculatorProgram.executeTestSuite();
     }
 
     @Test
     void testMutateShouldActuallyMutate() {
         for (int i = 0; i < 100; i++) {
-            RawSingleFileProgram mutated = mutator.mutate(shopProgram);
+            Program mutated = mutator.mutate(shopProgram);
             assert !mutated.equals(shopProgram);
         }
     }
@@ -54,7 +52,7 @@ class ClassicGenProgMutatorTest {
         boolean insertionHappened = false;
 
         for (int i = 0; i < 100; i++) {
-            RawSingleFileProgram mutated = mutator.mutate(intCalculatorProgram);
+            Program mutated = mutator.mutate(intCalculatorProgram);
             CompilationUnit mutatedCu = StaticJavaParser.parse(mutated.toString());
 
             int mutatedNodeCount = mutatedCu.findAll(Statement.class).size();
@@ -75,7 +73,7 @@ class ClassicGenProgMutatorTest {
         boolean swapHappened = false;
 
         for (int i = 0; i < 100; i++) {
-            RawSingleFileProgram mutated = mutator.mutate(intCalculatorProgram);
+            Program mutated = mutator.mutate(intCalculatorProgram);
             CompilationUnit mutatedCu = StaticJavaParser.parse(mutated.toString());
 
             int mutatedNodeCount = mutatedCu.findAll(Statement.class).size();
@@ -96,7 +94,7 @@ class ClassicGenProgMutatorTest {
         boolean deleteHappened = false;
 
         for (int i = 0; i < 100; i++) {
-            RawSingleFileProgram mutated = mutator.mutate(intCalculatorProgram);
+            Program mutated = mutator.mutate(intCalculatorProgram);
             CompilationUnit mutatedCu = StaticJavaParser.parse(mutated.toString());
 
             int mutatedNodeCount = mutatedCu.findAll(Statement.class).size();

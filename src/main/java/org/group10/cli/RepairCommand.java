@@ -4,6 +4,7 @@ import org.group10.crossover.Crossover;
 import org.group10.crossover.RawProgramCrossover;
 import org.group10.fitness.FitnessFunction;
 import org.group10.fitness.WeightedFitnessFunction;
+import org.group10.mutator.BinaryExprModifiableMutator;
 import org.group10.mutator.ClassicGenProgMutator;
 import org.group10.mutator.Mutator;
 import org.group10.program.Program;
@@ -52,11 +53,20 @@ public class RepairCommand implements Callable<Integer> {
     @CommandLine.Option(names = {"--multiclassmutation"}, defaultValue = "false")
     private boolean canGetFixFromDifferentClasses;
 
+    @CommandLine.Option(names = {"--mutate_binaryexprs"}, defaultValue = "false")
+    private boolean alsoMutateBinaryExprs;
+
     @CommandLine.Option(names = {"-out", "--output_dir"})
     private String outputDir;
 
     private Mutator<Program> setupClassicMutator(boolean canGetFixFromDifferentClasses) {
         ClassicGenProgMutator mutator = new ClassicGenProgMutator();
+        mutator.setCanGetFixFromDifferentClass(canGetFixFromDifferentClasses);
+        return mutator;
+    }
+
+    private Mutator<Program> setupBinaryExprModifiableMutator(boolean canGetFixFromDifferentClasses) {
+        ClassicGenProgMutator mutator = new BinaryExprModifiableMutator();
         mutator.setCanGetFixFromDifferentClass(canGetFixFromDifferentClasses);
         return mutator;
     }
@@ -107,7 +117,12 @@ public class RepairCommand implements Callable<Integer> {
 
     @Override
     public Integer call() {
-        Mutator<Program> mutator = setupClassicMutator(canGetFixFromDifferentClasses);
+        Mutator<Program> mutator;
+        if (alsoMutateBinaryExprs) {
+            mutator = setupBinaryExprModifiableMutator(canGetFixFromDifferentClasses);
+        } else {
+            mutator = setupClassicMutator(canGetFixFromDifferentClasses);
+        }
         Crossover<Program> crossover = setupRawProgramCrossover();
         SuspiciousCalculator suspiciousCalculator;
         faultLocalization = faultLocalization.toLowerCase();

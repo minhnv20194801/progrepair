@@ -15,6 +15,7 @@ org/group10/utils/Randomness.class
 org/group10/suspiciouscalculator/OchiaiSuspiciousCalculator.class
 org/group10/utils/instrument/CoverageInstrumenter.class
 org/group10/cli/BenchmarkCommand.class
+org/group10/mutator/BinaryExprModifiableMutator.class
 org/group10/crossover/RawProgramCrossover.class
 org/group10/searchalgorithm/ClassicGenProgAlgorithm.class
 org/group10/selection/ProgramBinaryTournamentSlection.class

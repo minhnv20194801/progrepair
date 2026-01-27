@@ -110,7 +110,7 @@ public class ClassicGenProgAlgorithm implements SearchAlgorithm<Program> {
             System.out.println("Start generation #" + i);
 
             population = population.stream()
-                    .filter(p -> p.getFitness() != 0)
+                    .filter(p -> !p.isNotCompilable())
                     .toList();
 
             List<Program> newPopulation = new ArrayList<>();
@@ -118,7 +118,10 @@ public class ClassicGenProgAlgorithm implements SearchAlgorithm<Program> {
             while (newPopulation.size() < populationSize) {
                 List<Program> tmpPopulation = new ArrayList<>(population);
                 Program parent1 = selector.select(tmpPopulation);
-                tmpPopulation.remove(parent1);
+                // if parent 1 the only one left then we should not remove it
+                if (tmpPopulation.size() > 1) {
+                    tmpPopulation.remove(parent1);
+                }
                 Program parent2 = selector.select(tmpPopulation);
                 tmpPopulation.remove(parent2);
                 while (parent1.equals(parent2) && !tmpPopulation.isEmpty()) {
@@ -145,8 +148,12 @@ public class ClassicGenProgAlgorithm implements SearchAlgorithm<Program> {
             for (Program prog : newPopulation) {
                 if (Randomness.getRandom().nextDouble() < mutationWeight) {
                     Program mutated = prog.mutate();
-                    while (mutated.isNotCompilable()) {
+                    int maxTries = 100;
+                    int tryCount = 0;
+                    // In case none of mutation can be compiled
+                    while (mutated.isNotCompilable() && tryCount < maxTries) {
                         mutated = prog.mutate();
+                        tryCount++;
                     }
                     population.add(mutated);
                 } else {
