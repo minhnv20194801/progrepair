@@ -10,7 +10,7 @@ import org.group10.mutator.Mutator;
 import org.group10.program.Program;
 import org.group10.searchalgorithm.ClassicGenProgAlgorithm;
 import org.group10.searchalgorithm.SearchAlgorithm;
-import org.group10.selection.ProgramBinaryTournamentSlection;
+import org.group10.selection.ProgramBinaryTournamentSelection;
 import org.group10.selection.Selection;
 import org.group10.suspiciouscalculator.OchiaiSuspiciousCalculator;
 import org.group10.suspiciouscalculator.SuspiciousCalculator;
@@ -108,7 +108,7 @@ public class RepairCommand implements Callable<Integer> {
     }
 
     private Selection<Program> setupBinaryTournamentSelection() {
-        return new ProgramBinaryTournamentSlection();
+        return new ProgramBinaryTournamentSelection();
     }
 
     private SearchAlgorithm<Program> setupSearchAlgorithm(int populationSize, int maxGeneration, double mutationWeight, Selection<Program> selector) {

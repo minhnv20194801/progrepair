@@ -103,6 +103,10 @@ public class WeightedFitnessFunction implements FitnessFunction<Program> {
             return false;
         }
 
+        if (originalProgram == null) {
+            originalProgram = target;
+        }
+
         return (target.getTestSuccessfulCount() == (originalProgram.getTestSuccessfulCount() + originalProgram.getTestFailedCount()));
     }
 

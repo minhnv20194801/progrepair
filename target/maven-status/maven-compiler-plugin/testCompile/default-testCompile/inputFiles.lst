@@ -1,3 +1,9 @@
+/home/minhnv/git/progrepair/src/test/java/selection/ProgramBinaryTournamentSelectionTest.java
+/home/minhnv/git/progrepair/src/test/java/searchalgorithm/ClassicGenProgAlgorithmTest.java
 /home/minhnv/git/progrepair/src/test/java/mutator/ClassicGenProgMutatorTest.java
 /home/minhnv/git/progrepair/src/test/java/mutator/BinaryExprModifiableMutatorTest.java
+/home/minhnv/git/progrepair/src/test/java/suspiciouscalculator/TarantulaSuspiciousCalculatorTest.java
 /home/minhnv/git/progrepair/src/test/java/utils/RandomnessTest.java
+/home/minhnv/git/progrepair/src/test/java/fitnessfunction/WeightedFitnessFunctionTest.java
+/home/minhnv/git/progrepair/src/test/java/crossover/RawProgramCrossoverTest.java
+/home/minhnv/git/progrepair/src/test/java/suspiciouscalculator/OchiaiSuspiciousCalculatorTest.java

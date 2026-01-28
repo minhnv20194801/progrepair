@@ -24,7 +24,7 @@ public class RandomnessTest {
 
     @Test
     void testRandomnessSetSeedShouldBeConsistent() throws Exception {
-        BufferedReader br = new BufferedReader(new FileReader("src/test/java/utils/expected_result.txt"));
+        BufferedReader br = new BufferedReader(new FileReader("src/test/java/utils/randomness_expected_result.txt"));
         String line;
         List<String> lines = new ArrayList<>();
         while ((line = br.readLine()) != null) {

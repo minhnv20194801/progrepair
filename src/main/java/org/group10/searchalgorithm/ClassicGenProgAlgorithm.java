@@ -118,20 +118,22 @@ public class ClassicGenProgAlgorithm implements SearchAlgorithm<Program> {
             while (newPopulation.size() < populationSize) {
                 List<Program> tmpPopulation = new ArrayList<>(population);
                 Program parent1 = selector.select(tmpPopulation);
-                // if parent 1 the only one left then we should not remove it
-                if (tmpPopulation.size() > 1) {
-                    tmpPopulation.remove(parent1);
-                }
-                Program parent2 = selector.select(tmpPopulation);
-                tmpPopulation.remove(parent2);
-                while (parent1.equals(parent2) && !tmpPopulation.isEmpty()) {
+                tmpPopulation = tmpPopulation.stream().filter(p -> !p.equals(parent1)).toList();
+                Program parent2;
+                // If the population only have one suitable parent then we have that one parent
+                // to create offspring with itself
+                if (tmpPopulation.isEmpty()) {
+                    parent2 = parent1;
+                } else {
                     parent2 = selector.select(tmpPopulation);
-                    tmpPopulation.remove(parent2);
                 }
                 Map.Entry<Program, Program> offsprings = parent1.crossover(parent2);
                 Program child1 = offsprings.getKey();
                 Program child2 = offsprings.getValue();
 
+                // If we have some check to only add parent1 and parent2 if
+                // they are not already in there, the search might ran in infinite
+                // loop and hang
                 newPopulation.add(parent1);
                 newPopulation.add(parent2);
                 if (!child1.isNotCompilable()) {
@@ -148,7 +150,7 @@ public class ClassicGenProgAlgorithm implements SearchAlgorithm<Program> {
             for (Program prog : newPopulation) {
                 if (Randomness.getRandom().nextDouble() < mutationWeight) {
                     Program mutated = prog.mutate();
-                    int maxTries = 100;
+                    int maxTries = 10;
                     int tryCount = 0;
                     // In case none of mutation can be compiled
                     while (mutated.isNotCompilable() && tryCount < maxTries) {

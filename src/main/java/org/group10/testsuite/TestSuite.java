@@ -26,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -42,6 +43,7 @@ import static org.junit.platform.engine.discovery.DiscoverySelectors.selectMetho
  */
 public class TestSuite {
     private final List<String> codes = new ArrayList<>();
+    private List<String> testClasses = new ArrayList<>();
 
     /**
      * Constructs a {@link TestSuite} from a Java test file. <br>
@@ -92,7 +94,71 @@ public class TestSuite {
 
         long id = ProcessHandle.current().pid();
         Path outputDir = Files.createTempDirectory(targetProgram.getClassName() + id + "compiled_");
+        compile(outputDir, targetProgram, withLog);
 
+        ClassLoader loader = loadClasses(outputDir);
+
+        try (LauncherSession session = LauncherFactory.openSession()) {
+            SummaryGeneratingListener listener = new SummaryGeneratingListener();
+            Launcher launcher = session.getLauncher();
+            launcher.registerTestExecutionListeners(listener);
+//            List<String> positiveTests = new ArrayList<>();
+//            List<String> negativeTests = new ArrayList<>();
+            int successCount = 0;
+            int failedCount = 0;
+
+            if (withLog) {
+                System.out.println("==========================");
+                System.out.println("TEST SUMMARY: " + targetProgram.getClassName());
+                System.out.println("==========================");
+            }
+
+            for (String testClassName : testClasses) {
+                Class<?> testClass = loader.loadClass(testClassName);
+                List<Method> testMethods = Arrays.stream(testClass.getDeclaredMethods())
+                        .filter(m -> m.isAnnotationPresent(Test.class))
+                        .toList();
+
+                for (Method m : testMethods) {
+                    CoverageTracker.reset();
+                    String testName = testClass.getSimpleName() + "@" + m.getName();
+                    if (withLog) {
+                        System.out.print("Executing test " + testName + ": ");
+                    }
+                    LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
+                            .selectors(selectMethod(testClass, m.getName()))
+                            .build();
+                    launcher.execute(request);
+
+                    boolean isSucceed = (listener.getSummary().getTestsSucceededCount() == 1);
+
+                    if (isSucceed) {
+                        recordSuccessResult(targetProgram, testName);
+                        successCount++;
+                        if (withLog) {
+                            System.out.println("✅");
+                        }
+                    } else {
+                        recordFailedResult(targetProgram, testName);
+                        failedCount++;
+                        if (withLog) {
+                            System.out.println("❌");
+                        }
+                    }
+                }
+            }
+
+            if (withLog) {
+                System.out.println((successCount + failedCount) + " tests executed");
+                System.out.println(successCount + " tests successful");
+                System.out.println(failedCount + " tests failed");
+                System.out.println("==========================");
+            }
+        }
+        FolderCleaner.cleanTmpDir(targetProgram.getClassName());
+    }
+
+    private void compile(Path outputDir, Program targetProgram, boolean withLog) throws Exception {
         Path targetProgramFile = outputDir.resolve(targetProgram.getClassName() + ".java");
         Files.write(targetProgramFile, targetProgram.getCodes());
         Path testFile = outputDir.resolve(targetProgram.getClassName() + "Test.java");
@@ -122,18 +188,19 @@ public class TestSuite {
                 System.err.println("Test Suite compile failure");
             }
             FolderCleaner.cleanTmpDir(targetProgram.getClassName());
-            return;
         }
+    }
 
+    private ClassLoader loadClasses(Path classDir) throws Exception {
         InstrumentingClassLoader loader = new InstrumentingClassLoader();
+        testClasses.clear();
 
-        List<String> testClasses = new ArrayList<>();
-        try (Stream<Path> paths = Files.walk(outputDir)) {
+        try (Stream<Path> paths = Files.walk(classDir)) {
             paths.filter(Files::isRegularFile)
                     .filter(p -> p.toString().endsWith(".class"))
                     .forEach(p -> {
                         try {
-                            String className = outputDir.relativize(p)
+                            String className = classDir.relativize(p)
                                     .toString()
                                     .replace(FileSystems.getDefault().getSeparator(), ".")
                                     .replaceAll("\\.class$", "");
@@ -153,81 +220,39 @@ public class TestSuite {
                     });
         }
 
-        try (LauncherSession session = LauncherFactory.openSession()) {
-            SummaryGeneratingListener listener = new SummaryGeneratingListener();
-            Launcher launcher = session.getLauncher();
-            launcher.registerTestExecutionListeners(listener);
-            List<String> positiveTests = new ArrayList<>();
-            List<String> negativeTests = new ArrayList<>();
+        return loader;
+    }
 
-            if (withLog) {
-                System.out.println("==========================");
-                System.out.println("TEST SUMMARY: " + targetProgram.getClassName());
-                System.out.println("==========================");
-            }
+    private void recordSuccessResult(Program targetProgram, String testName) {
+        List<Integer> hitLines = CoverageTracker.getExecutedLines();
 
-            for (String testClassName : testClasses) {
-                Class<?> testClass = loader.loadClass(testClassName);
-                for (Method m : testClass.getDeclaredMethods()) {
-                    if (m.isAnnotationPresent(Test.class)) {
-                        CoverageTracker.reset();
-                        if (withLog) {
-                            System.out.print("Executing test " + testClass.getSimpleName() + "@" + m.getName() + ": ");
-                        }
-                        LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
-                                .selectors(selectMethod(testClass, m.getName()))
-                                .build();
-                        launcher.execute(request);
-
-                        boolean isSucceed = (listener.getSummary().getTestsSucceededCount() == 1);
-                        List<Integer> hitLines = CoverageTracker.getExecutedLines();
-                        if (isSucceed) {
-                            positiveTests.add(testClass.getSimpleName() + "@" + m.getName());
-
-                            for (int i = 0; i < targetProgram.getCodes().size(); i++) {
-                                if (hitLines.contains(i)) {
-                                    Map<Integer, Integer> eps = targetProgram.getEps();
-                                    eps.put(i, eps.getOrDefault(i, 0) + 1);
-                                } else {
-                                    Map<Integer, Integer> nps = targetProgram.getNps();
-                                    nps.put(i, nps.getOrDefault(i, 0) + 1);
-                                }
-                            }
-
-                            if (withLog) {
-                                System.out.println("✅");
-                            }
-                        } else {
-                            negativeTests.add(testClass.getSimpleName() + "@" + m.getName());
-                            for (int i = 0; i < targetProgram.getCodes().size(); i++) {
-                                if (hitLines.contains(i)) {
-                                    Map<Integer, Integer> efs = targetProgram.getEfs();
-                                    efs.put(i, efs.getOrDefault(i, 0) + 1);
-                                } else {
-                                    Map<Integer, Integer> nfs = targetProgram.getNfs();
-                                    nfs.put(i, nfs.getOrDefault(i, 0) + 1);
-                                }
-                            }
-
-                            if (withLog) {
-                                System.out.println("❌");
-                            }
-                        }
-                    }
-                }
-            }
-
-            targetProgram.setPositiveTests(positiveTests);
-            targetProgram.setNegativeTests(negativeTests);
-
-            if (withLog) {
-                System.out.println((positiveTests.size() + negativeTests.size()) + " tests executed");
-                System.out.println(positiveTests.size() + " tests successful");
-                System.out.println(negativeTests.size() + " tests failed");
-                System.out.println("==========================");
+        for (int i = 0; i < targetProgram.getCodes().size(); i++) {
+            if (hitLines.contains(i)) {
+                Map<Integer, Integer> eps = targetProgram.getEps();
+                eps.put(i, eps.getOrDefault(i, 0) + 1);
+            } else {
+                Map<Integer, Integer> nps = targetProgram.getNps();
+                nps.put(i, nps.getOrDefault(i, 0) + 1);
             }
         }
-        FolderCleaner.cleanTmpDir(targetProgram.getClassName());
+
+        targetProgram.getPositiveTests().add(testName);
+    }
+
+    private void recordFailedResult(Program targetProgram, String testName) {
+        List<Integer> hitLines = CoverageTracker.getExecutedLines();
+
+        for (int i = 0; i < targetProgram.getCodes().size(); i++) {
+            if (hitLines.contains(i)) {
+                Map<Integer, Integer> efs = targetProgram.getEfs();
+                efs.put(i, efs.getOrDefault(i, 0) + 1);
+            } else {
+                Map<Integer, Integer> nfs = targetProgram.getNfs();
+                nfs.put(i, nfs.getOrDefault(i, 0) + 1);
+            }
+        }
+
+        targetProgram.getNegativeTests().add(testName);
     }
 
     /**

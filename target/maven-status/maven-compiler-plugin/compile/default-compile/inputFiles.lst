@@ -8,6 +8,7 @@
 /home/minhnv/git/progrepair/src/main/java/org/group10/utils/astvisitor/ScopeVisitor.java
 /home/minhnv/git/progrepair/src/main/java/org/group10/utils/instrument/CoverageInstrumenter.java
 /home/minhnv/git/progrepair/src/main/java/org/group10/fitness/FitnessFunction.java
+/home/minhnv/git/progrepair/src/main/java/org/group10/selection/ProgramBinaryTournamentSelection.java
 /home/minhnv/git/progrepair/src/main/java/org/group10/crossover/RawProgramCrossover.java
 /home/minhnv/git/progrepair/src/main/java/org/group10/Main.java
 /home/minhnv/git/progrepair/src/main/java/org/group10/suspiciouscalculator/OchiaiSuspiciousCalculator.java
@@ -16,7 +17,6 @@
 /home/minhnv/git/progrepair/src/main/java/org/group10/utils/FolderCleaner.java
 /home/minhnv/git/progrepair/src/main/java/org/group10/mutator/Mutator.java
 /home/minhnv/git/progrepair/src/main/java/org/group10/program/Program.java
-/home/minhnv/git/progrepair/src/main/java/org/group10/selection/ProgramBinaryTournamentSlection.java
 /home/minhnv/git/progrepair/src/main/java/org/group10/suspiciouscalculator/SuspiciousCalculator.java
 /home/minhnv/git/progrepair/src/main/java/org/group10/mutator/BinaryExprModifiableMutator.java
 /home/minhnv/git/progrepair/src/main/java/org/group10/utils/Randomness.java

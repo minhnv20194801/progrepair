@@ -1,3 +1,9 @@
-utils/RandomnessTest.class
-mutator/ClassicGenProgMutatorTest.class
+searchalgorithm/ClassicGenProgAlgorithmTest.class
 mutator/BinaryExprModifiableMutatorTest.class
+crossover/RawProgramCrossoverTest.class
+utils/RandomnessTest.class
+selection/ProgramBinaryTournamentSelectionTest.class
+fitnessfunction/WeightedFitnessFunctionTest.class
+mutator/ClassicGenProgMutatorTest.class
+suspiciouscalculator/OchiaiSuspiciousCalculatorTest.class
+suspiciouscalculator/TarantulaSuspiciousCalculatorTest.class
