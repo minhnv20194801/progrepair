@@ -9,7 +9,6 @@ class Item {
     private double pricePerUnit;
 
     public Item(String name, int quantity, double pricePerUnit) {
-        this.quantity = quantity;
         this.name = name;
         this.quantity = quantity;
         this.pricePerUnit = pricePerUnit;
@@ -196,6 +195,7 @@ public class Shop {
 
     public void reStock(Item item) {
         if (item == null) {
+            return;
         }
         int index = items.indexOf(item);
         if (index == -1) {

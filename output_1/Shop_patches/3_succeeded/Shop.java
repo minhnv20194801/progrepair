@@ -93,8 +93,8 @@ class Customer {
     private boolean isVIP = false;
 
     public Customer(String name, BankAccount bankAccount) {
-        this.bankAccount = bankAccount;
         this.name = name;
+        this.bankAccount = bankAccount;
     }
 
     public void pay(double amount, BankAccount to) throws FailedTransactionException {
@@ -201,6 +201,8 @@ public class Shop {
         if (index == -1) {
             items.add(item);
         } else {
+            Item oldItem = items.get(index);
+            oldItem.setQuantity(oldItem.getQuantity() + item.getQuantity());
         }
     }
 
@@ -257,8 +259,6 @@ public class Shop {
             stockItem.setQuantity(stockItem.getQuantity() - item.getQuantity());
             return item;
         } else {
-            items.remove(stockItem);
-            item.setQuantity(stockItem.getQuantity());
             items.remove(stockItem);
             item.setQuantity(stockItem.getQuantity());
             return item;

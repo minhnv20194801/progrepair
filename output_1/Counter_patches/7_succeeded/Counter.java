@@ -7,10 +7,9 @@ public class Counter {
     }
 
     public Counter(int initial) {
-        count++;
+        this.count = count;
         int count = initial;
         this.count = count;
-        count++;
     }
 
     public void increment() {
@@ -26,6 +25,10 @@ public class Counter {
     }
 
     public void setCount(int count) {
+        this.count = count;
+        this.count = count;
+        this.count = count;
+        this.count = count;
         this.count = count;
     }
 }

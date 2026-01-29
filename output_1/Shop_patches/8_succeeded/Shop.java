@@ -9,8 +9,8 @@ class Item {
     private double pricePerUnit;
 
     public Item(String name, int quantity, double pricePerUnit) {
-        this.name = name;
         this.quantity = quantity;
+        this.name = name;
         this.pricePerUnit = pricePerUnit;
     }
 
@@ -129,11 +129,11 @@ class BankAccount {
     private double balance;
 
     public BankAccount() {
-        balance = 0;
     }
 
     public BankAccount(double balance) {
         if (balance < 0) {
+            balance = 0;
             balance = 0;
         }
         this.balance = balance;
@@ -203,6 +203,7 @@ public class Shop {
         } else {
             Item oldItem = items.get(index);
             oldItem.setQuantity(oldItem.getQuantity() + item.getQuantity());
+            oldItem.setQuantity(oldItem.getQuantity() + item.getQuantity());
         }
     }
 
@@ -222,11 +223,12 @@ public class Shop {
         if (customerCart == null) {
             throw new UnregisteredCustomerException();
         }
-        Item removedItem = customerCart.removeItem(item);
-        reStock(removedItem);
     }
 
     public void acceptCustomer(Customer customer) throws MaximumCustomerException {
+        if (activeCustomerMap.get(customer) != null) {
+            return;
+        }
         if (activeCustomerMap.get(customer) != null) {
             return;
         }
@@ -256,7 +258,6 @@ public class Shop {
         }
         Item stockItem = items.get(items.indexOf(item));
         if (stockItem.getQuantity() > item.getQuantity()) {
-            stockItem.setQuantity(stockItem.getQuantity() - item.getQuantity());
             return item;
         } else {
             items.remove(stockItem);

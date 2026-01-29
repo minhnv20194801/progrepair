@@ -9,8 +9,8 @@ class Item {
     private double pricePerUnit;
 
     public Item(String name, int quantity, double pricePerUnit) {
-        this.name = name;
         this.quantity = quantity;
+        this.name = name;
         this.pricePerUnit = pricePerUnit;
     }
 
@@ -129,7 +129,6 @@ class BankAccount {
     private double balance;
 
     public BankAccount() {
-        balance = 0;
     }
 
     public BankAccount(double balance) {
@@ -260,6 +259,7 @@ public class Shop {
             return item;
         } else {
             items.remove(stockItem);
+            item.setQuantity(stockItem.getQuantity());
             item.setQuantity(stockItem.getQuantity());
             return item;
         }

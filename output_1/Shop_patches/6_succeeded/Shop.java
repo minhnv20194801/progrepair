@@ -10,8 +10,8 @@ class Item {
 
     public Item(String name, int quantity, double pricePerUnit) {
         this.name = name;
-        this.pricePerUnit = pricePerUnit;
         this.quantity = quantity;
+        this.pricePerUnit = pricePerUnit;
     }
 
     @Override
@@ -129,7 +129,6 @@ class BankAccount {
     private double balance;
 
     public BankAccount() {
-        balance = 0;
     }
 
     public BankAccount(double balance) {
@@ -200,6 +199,7 @@ public class Shop {
         int index = items.indexOf(item);
         if (index == -1) {
             items.add(item);
+            items.add(item);
         } else {
             Item oldItem = items.get(index);
             oldItem.setQuantity(oldItem.getQuantity() + item.getQuantity());
@@ -236,7 +236,6 @@ public class Shop {
         ShoppingCart freeCart = freeCarts.getFirst();
         freeCarts.removeFirst();
         activeCustomerMap.put(customer, freeCart);
-        activeCustomerMap.put(customer, freeCart);
     }
 
     public void customerPaying(Customer customer) throws FailedTransactionException, UnregisteredCustomerException {
@@ -247,7 +246,6 @@ public class Shop {
         double amount = customerCart.getTotalPrice();
         customer.pay(amount, bankAccount);
         activeCustomerMap.remove(customer);
-        customerCart.clear();
         customerCart.clear();
         freeCarts.add(customerCart);
     }

@@ -41,9 +41,9 @@ public class Program implements Cloneable {
     private final Map<Integer, Integer> eps = new HashMap<>();
     private final Map<Integer, Integer> nps = new HashMap<>();
     private final TestSuite testSuite;
+    private final List<String> positiveTests = new ArrayList<>();
+    private final List<String> negativeTests = new ArrayList<>();
     private List<String> codes = new ArrayList<>();
-    private List<String> positiveTests = new ArrayList<>();
-    private List<String> negativeTests = new ArrayList<>();
     private boolean isTestSuiteExecuted = false;
 
     /**
@@ -290,14 +290,6 @@ public class Program implements Cloneable {
     }
 
     /**
-     * Setter for the program's {@link List} of failed tests.
-     * @param negativeTests the list of failed tests to be set
-     */
-    public void setNegativeTests(List<String> negativeTests) {
-        this.negativeTests = negativeTests;
-    }
-
-    /**
      * Getter for the program's number of successful test.
      * @return the number of successful test of the program
      */
@@ -311,14 +303,6 @@ public class Program implements Cloneable {
      */
     public List<String> getPositiveTests() {
         return positiveTests;
-    }
-
-    /**
-     * Setter for the program's {@link List} of successful tests.
-     * @param positiveTests the list of successful tests to be set
-     */
-    public void setPositiveTests(List<String> positiveTests) {
-        this.positiveTests = positiveTests;
     }
 
     /**

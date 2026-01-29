@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: selection.ProgramBinaryTournamentSelectionTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.701 s -- in selection.ProgramBinaryTournamentSelectionTest

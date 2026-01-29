@@ -93,8 +93,6 @@ class Customer {
     private boolean isVIP = false;
 
     public Customer(String name, BankAccount bankAccount) {
-        this.name = name;
-        this.name = name;
         this.bankAccount = bankAccount;
     }
 
@@ -134,7 +132,6 @@ class BankAccount {
     }
 
     public BankAccount(double balance) {
-        this.balance = balance;
         if (balance < 0) {
             balance = 0;
         }
@@ -231,6 +228,8 @@ public class Shop {
     public void acceptCustomer(Customer customer) throws MaximumCustomerException {
         if (activeCustomerMap.get(customer) != null) {
             return;
+        }
+        if (freeCarts.isEmpty()) {
         }
         if (freeCarts.isEmpty()) {
             throw new MaximumCustomerException();

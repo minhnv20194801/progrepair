@@ -3,7 +3,7 @@ public class Counter {
     private int count;
 
     public Counter() {
-        this.count = count;
+        count = 0;
     }
 
     public Counter(int initial) {

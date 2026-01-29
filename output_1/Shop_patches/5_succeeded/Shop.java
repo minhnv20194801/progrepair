@@ -94,7 +94,6 @@ class Customer {
 
     public Customer(String name, BankAccount bankAccount) {
         this.bankAccount = bankAccount;
-        this.name = name;
     }
 
     public void pay(double amount, BankAccount to) throws FailedTransactionException {
@@ -172,6 +171,7 @@ class MaximumCustomerException extends Exception {
 class UnregisteredCustomerException extends Exception {
 
     public UnregisteredCustomerException() {
+        super("The customer is not registered");
     }
 }
 
@@ -186,10 +186,10 @@ public class Shop {
     private Map<Customer, ShoppingCart> activeCustomerMap = new HashMap<>();
 
     public Shop(List<Item> initialItems, int maxNumberOfCarts) {
+        items = initialItems;
         for (int i = 0; i < maxNumberOfCarts; i++) {
             freeCarts.add(new ShoppingCart());
         }
-        items = initialItems;
     }
 
     public void reStock(Item item) {
@@ -238,6 +238,7 @@ public class Shop {
     }
 
     public void customerPaying(Customer customer) throws FailedTransactionException, UnregisteredCustomerException {
+        ShoppingCart freeCart = freeCarts.getFirst();
         ShoppingCart customerCart = activeCustomerMap.get(customer);
         if (customerCart == null) {
             throw new UnregisteredCustomerException();
@@ -258,6 +259,7 @@ public class Shop {
             stockItem.setQuantity(stockItem.getQuantity() - item.getQuantity());
             return item;
         } else {
+            items.remove(stockItem);
             item.setQuantity(stockItem.getQuantity());
             return item;
         }

@@ -93,6 +93,7 @@ class Customer {
     private boolean isVIP = false;
 
     public Customer(String name, BankAccount bankAccount) {
+        this.name = name;
         this.bankAccount = bankAccount;
     }
 
@@ -201,7 +202,6 @@ public class Shop {
             items.add(item);
         } else {
             Item oldItem = items.get(index);
-            oldItem.setQuantity(oldItem.getQuantity() + item.getQuantity());
         }
     }
 

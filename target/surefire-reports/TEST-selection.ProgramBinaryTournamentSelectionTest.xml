@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="selection.ProgramBinaryTournamentSelectionTest" time="6.701" tests="1" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="java.specification.version" value="23"/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.class.path" value="/home/minhnv/git/progrepair/target/test-classes:/home/minhnv/git/progrepair/target/classes:/home/minhnv/.m2/repository/org/junit/jupiter/junit-jupiter/5.12.2/junit-jupiter-5.12.2.jar:/home/minhnv/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.12.2/junit-jupiter-api-5.12.2.jar:/home/minhnv/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/home/minhnv/.m2/repository/org/junit/platform/junit-platform-commons/1.12.2/junit-platform-commons-1.12.2.jar:/home/minhnv/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/home/minhnv/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.12.2/junit-jupiter-engine-5.12.2.jar:/home/minhnv/.m2/repository/org/junit/platform/junit-platform-engine/1.12.2/junit-platform-engine-1.12.2.jar:/home/minhnv/.m2/repository/org/junit/platform/junit-platform-launcher/1.12.2/junit-platform-launcher-1.12.2.jar:/home/minhnv/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.12.2/junit-jupiter-params-5.12.2.jar:/home/minhnv/.m2/repository/org/ow2/asm/asm/9.8/asm-9.8.jar:/home/minhnv/.m2/repository/org/ow2/asm/asm-analysis/9.8/asm-analysis-9.8.jar:/home/minhnv/.m2/repository/org/ow2/asm/asm-tree/9.8/asm-tree-9.8.jar:/home/minhnv/.m2/repository/org/ow2/asm/asm-util/9.8/asm-util-9.8.jar:/home/minhnv/.m2/repository/com/github/javaparser/javaparser-core/3.25.8/javaparser-core-3.25.8.jar:/home/minhnv/.m2/repository/com/github/javaparser/javaparser-symbol-solver-core/3.25.8/javaparser-symbol-solver-core-3.25.8.jar:/home/minhnv/.m2/repository/org/javassist/javassist/3.30.2-GA/javassist-3.30.2-GA.jar:/home/minhnv/.m2/repository/com/google/guava/guava/33.0.0-jre/guava-33.0.0-jre.jar:/home/minhnv/.m2/repository/com/google/guava/failureaccess/1.0.2/failureaccess-1.0.2.jar:/home/minhnv/.m2/repository/com/google/guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar:/home/minhnv/.m2/repository/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar:/home/minhnv/.m2/repository/org/checkerframework/checker-qual/3.41.0/checker-qual-3.41.0.jar:/home/minhnv/.m2/repository/com/google/errorprone/error_prone_annotations/2.23.0/error_prone_annotations-2.23.0.jar:/home/minhnv/.m2/repository/com/google/j2objc/j2objc-annotations/2.8/j2objc-annotations-2.8.jar:/home/minhnv/.m2/repository/info/picocli/picocli/4.7.6/picocli-4.7.6.jar:/home/minhnv/.m2/repository/com/github/stefanbirkner/system-lambda/1.2.1/system-lambda-1.2.1.jar:"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="java.vendor.url" value="https://java.oracle.com/"/>
+    <property name="user.timezone" value="Europe/Berlin"/>
+    <property name="os.name" value="Linux"/>
+    <property name="java.vm.specification.version" value="23"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="user.country" value="US"/>
+    <property name="sun.boot.library.path" value="/home/minhnv/.jdks/openjdk-23.0.1/lib"/>
+    <property name="sun.java.command" value="/home/minhnv/git/progrepair/target/surefire/surefirebooter-20260128173017082_3.jar /home/minhnv/git/progrepair/target/surefire 2026-01-28T17-30-16_951-jvmRun1 surefire-20260128173017082_1tmp surefire_0-20260128173017082_2tmp"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="surefire.test.class.path" value="/home/minhnv/git/progrepair/target/test-classes:/home/minhnv/git/progrepair/target/classes:/home/minhnv/.m2/repository/org/junit/jupiter/junit-jupiter/5.12.2/junit-jupiter-5.12.2.jar:/home/minhnv/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.12.2/junit-jupiter-api-5.12.2.jar:/home/minhnv/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/home/minhnv/.m2/repository/org/junit/platform/junit-platform-commons/1.12.2/junit-platform-commons-1.12.2.jar:/home/minhnv/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/home/minhnv/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.12.2/junit-jupiter-engine-5.12.2.jar:/home/minhnv/.m2/repository/org/junit/platform/junit-platform-engine/1.12.2/junit-platform-engine-1.12.2.jar:/home/minhnv/.m2/repository/org/junit/platform/junit-platform-launcher/1.12.2/junit-platform-launcher-1.12.2.jar:/home/minhnv/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.12.2/junit-jupiter-params-5.12.2.jar:/home/minhnv/.m2/repository/org/ow2/asm/asm/9.8/asm-9.8.jar:/home/minhnv/.m2/repository/org/ow2/asm/asm-analysis/9.8/asm-analysis-9.8.jar:/home/minhnv/.m2/repository/org/ow2/asm/asm-tree/9.8/asm-tree-9.8.jar:/home/minhnv/.m2/repository/org/ow2/asm/asm-util/9.8/asm-util-9.8.jar:/home/minhnv/.m2/repository/com/github/javaparser/javaparser-core/3.25.8/javaparser-core-3.25.8.jar:/home/minhnv/.m2/repository/com/github/javaparser/javaparser-symbol-solver-core/3.25.8/javaparser-symbol-solver-core-3.25.8.jar:/home/minhnv/.m2/repository/org/javassist/javassist/3.30.2-GA/javassist-3.30.2-GA.jar:/home/minhnv/.m2/repository/com/google/guava/guava/33.0.0-jre/guava-33.0.0-jre.jar:/home/minhnv/.m2/repository/com/google/guava/failureaccess/1.0.2/failureaccess-1.0.2.jar:/home/minhnv/.m2/repository/com/google/guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar:/home/minhnv/.m2/repository/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar:/home/minhnv/.m2/repository/org/checkerframework/checker-qual/3.41.0/checker-qual-3.41.0.jar:/home/minhnv/.m2/repository/com/google/errorprone/error_prone_annotations/2.23.0/error_prone_annotations-2.23.0.jar:/home/minhnv/.m2/repository/com/google/j2objc/j2objc-annotations/2.8/j2objc-annotations-2.8.jar:/home/minhnv/.m2/repository/info/picocli/picocli/4.7.6/picocli-4.7.6.jar:/home/minhnv/.m2/repository/com/github/stefanbirkner/system-lambda/1.2.1/system-lambda-1.2.1.jar:"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="/home/minhnv"/>
+    <property name="user.language" value="en"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2024-10-15"/>
+    <property name="java.home" value="/home/minhnv/.jdks/openjdk-23.0.1"/>
+    <property name="file.separator" value="/"/>
+    <property name="basedir" value="/home/minhnv/git/progrepair"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="surefire.real.class.path" value="/home/minhnv/git/progrepair/target/surefire/surefirebooter-20260128173017082_3.jar"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="java.runtime.version" value="23.0.1+11-39"/>
+    <property name="user.name" value="minhnv"/>
+    <property name="stdout.encoding" value="UTF-8"/>
+    <property name="path.separator" value=":"/>
+    <property name="os.version" value="6.8.0-87-generic"/>
+    <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+    <property name="localRepository" value="/home/minhnv/.m2/repository"/>
+    <property name="java.vendor.url.bug" value="https://bugreport.java.com/bugreport/"/>
+    <property name="java.io.tmpdir" value="/tmp"/>
+    <property name="java.version" value="23.0.1"/>
+    <property name="user.dir" value="/home/minhnv/git/progrepair"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="native.encoding" value="UTF-8"/>
+    <property name="java.library.path" value="/usr/java/packages/lib:/usr/lib64:/lib64:/lib:/usr/lib"/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="stderr.encoding" value="UTF-8"/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="java.vm.version" value="23.0.1+11-39"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="67.0"/>
+  </properties>
+  <testcase name="testSelection" classname="selection.ProgramBinaryTournamentSelectionTest" time="6.701"/>
+</testsuite>

@@ -9,12 +9,12 @@ class Item {
     private double pricePerUnit;
 
     public Item(String name, int quantity, double pricePerUnit) {
+        this.pricePerUnit = pricePerUnit;
         this.name = name;
         this.quantity = quantity;
         this.pricePerUnit = pricePerUnit;
     }
 
-    @Override
     public boolean equals(Object obj) {
         if (obj instanceof Item other) {
             return this.name.equals(other.name);
@@ -151,7 +151,6 @@ class BankAccount {
         }
         if (amount < 0) {
             amount = 0;
-            amount = 0;
         }
         this.balance -= amount;
         destination.balance += amount;
@@ -252,6 +251,7 @@ public class Shop {
 
     private Item removeItemFromStock(Item item) {
         if (!items.contains(item)) {
+            return null;
         }
         Item stockItem = items.get(items.indexOf(item));
         if (stockItem.getQuantity() > item.getQuantity()) {
